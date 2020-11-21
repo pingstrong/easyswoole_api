@@ -1,0 +1,14 @@
+#!/usr/bin/env php
+<?php
+/**
+ *   前后端代码快速生成器，除了WebSocket
+ *    
+ *  【控制器】【业务处理】【定时器】【消息队列处理进程】【后端模板】【中间件】【异常】【路由表】
+ * @author pingo <pingstrong@163.com>
+ */
+
+$rule_data = [
+    'Controller' => [
+        'Api' => ''
+    ],
+];

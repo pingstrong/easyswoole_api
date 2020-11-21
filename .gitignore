@@ -1,0 +1,9 @@
+/vendor/
+/.idea/
+/.project
+/.settings
+.buildpath
+*.lock
+/Log
+/Temp
+/.env
