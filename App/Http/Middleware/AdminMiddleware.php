@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use Closure;
 use App\Http\Middleware\Contracts\Middleware;
+use App\Service\Admin\Auth\AdminRuleService;
 use EasySwoole\Jwt\Jwt;
 use App\Utility\Message\Status;
 
@@ -32,32 +33,33 @@ class AdminMiddleware extends Middleware
 			$JwtObject = Jwt::getInstance()
 			->setSecretKey(config("app.jwt.secret_key")) // 秘钥
 			->decode($client_token);
+		
+			$status = $JwtObject->getStatus();
+			switch ($status) {
+				case 1:
+					# 验证通过
+					$this->request->jwt_data = $jwt_data = $JwtObject->getData();
+					//权限检测
+					$this->request->account_rule_nodes = AdminRuleService::getInstance()->getColumnByRoleId($jwt_data['role_id'], "node", $jwt_data['is_super']);
+					return true;
+					break;
+				/* case -1:
+					//无效
+					break;
+				case -2:
+					//token过期
+					break; */
+				default:
+					# code...
+					$this->responseGP('/backdata/login', Status::CODE_RULE_ERR, '请登录在操作！');
+					return false;
+					break;
+			}
+			return true; 
 		}catch(\Throwable $e){
-            $this->responseGP('/backdata/login',  Status::CODE_RULE_ERR, '请登录在操作！');   
+			$this->responseGP('/backdata/login',  Status::CODE_RULE_ERR, '请登录在操作！');   
 			return false;
 		}
-		
-		$status = $JwtObject->getStatus();
-		switch ($status) {
-			case 1:
-				# 验证通过
-				$this->request->jwt_data = $jwt_data = $JwtObject->getData();
-				
-				return true;
-				break;
-			/* case -1:
-				//无效
-				break;
-			case -2:
-				//token过期
-				break; */
-			default:
-				# code...
-                $this->responseGP('/backdata/login', Status::CODE_RULE_ERR, '请登录在操作！');
-				return false;
-				break;
-		}
-        return true; 
         //return $next($request);
     }
 

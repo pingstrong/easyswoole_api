@@ -1,6 +1,6 @@
 @extends('admin.auth.roleBase')
 
-@section('javascriptFooter')
+@section('footer_js')
 <script>
  
 layui.use('form', function(){

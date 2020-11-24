@@ -8,19 +8,25 @@ use easySwoole\Cache\Cache;
 class AppFunc
 {
     // 二维数组 转 tree
-    public static function arrayToTree($list, $pid = 'pid')
+    public static function arrayToTree($list, $pid = 'pid', array $alias = [], $child = "children")
     {
         $map = [];
         if (is_array($list)) {
             foreach ($list as $k => $v) {
+                if(!empty($alias)){
+                    foreach ($v as $key => $value) {
+                        # code...
+                        if(isset($alias[$key])) $v[$alias[$key]] = $value;
+                    }
+                }
                 $map[$v[$pid]][] = $v; // 同一个pid 放在同一个数组中
             }
         }
 
-        return self::makeTree($map);
+        return self::makeTree($map, 0, $child);
     }
 
-    private static function makeTree($list, $parent_id = 0)
+    private static function makeTree($list, $parent_id = 0, $child_name)
     {
         $items = isset($list[$parent_id]) ? $list[$parent_id] : [];
         if (!$items) {
@@ -29,9 +35,9 @@ class AppFunc
 
         $trees = [];
         foreach ($items as $k => $v) {
-            $children = self::makeTree($list, $v['id']); // 找到以这个id 为pid 的数据
+            $children = self::makeTree($list, $v['id'], $child_name); // 找到以这个id 为pid 的数据
             if ($children) {
-                $v['children'] = $children;
+                $v[$child_name] = $children;
             }
             $trees[] = $v;
         }
@@ -94,4 +100,5 @@ class AppFunc
         }
         return $str;
     }
+
 }

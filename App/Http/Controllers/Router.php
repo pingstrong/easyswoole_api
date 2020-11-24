@@ -6,7 +6,7 @@ use EasySwoole\Http\Request;
 use EasySwoole\Http\Response;
 use EasySwoole\template\Render;
 use FastRoute\RouteCollector;
-use App\Service\Admin\AdminRuleService;
+use App\Service\Admin\Auth\AdminRuleService;
 use EasySwoole\Utility\File;
 
 class Router extends AbstractRouter
@@ -17,6 +17,8 @@ class Router extends AbstractRouter
     {
         
         $this->setPathInfoMode(false);
+        // 开启全局路由(只有定义的地址才可以访问)
+        $this->setGlobalMode(true);
         //$this->setGlobalMode(true);
         // 未找到路由对应的方法
         $this->setMethodNotAllowCallBack(function (Request $request, Response $response) {
@@ -37,7 +39,7 @@ class Router extends AbstractRouter
             return false; //结束此次响应
         });
         
-        //添加前端路由表
+        //添加前端路由表, 启动只加载一次到内存
         $files = File::scanDirectory(EASYSWOOLE_ROOT . '/App/Routes');
         if (is_array($files)) {
             foreach ($files['files'] as $file) {

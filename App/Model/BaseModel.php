@@ -32,31 +32,7 @@ class BaseModel extends AbstractModel
         'test_string'   => 'string',
     ]; */
 
-	/* protected $db;
-	protected $table;
-    private static $instance=[];
-
-    static function getInstance(...$args)
-    {
-        $obj_name = static::class;
-        if(!isset(self::$instance[$obj_name])){
-            self::$instance[$obj_name] = new static(...$args);
-        }
-        return self::$instance[$obj_name];
-    }
-    
-	protected function __construct()
-	{
-        parent::__construct();
-		  $db = MysqlPool::defer();
-
-		if($db instanceof MysqlObject) {
-			$this->db = $db;
-		} else {
-			throw new \Exception('mysql pool is empty');
-		}  
-	} */
-
+	 
 	 
 
 }

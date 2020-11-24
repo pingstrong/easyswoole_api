@@ -1,5 +1,12 @@
 {
+    "authors": [
+        {
+            "name": "pingo",
+            "email": "pingstrong@163.com"
+        }
+    ],
     "require": {
+        "php": ">=7.2.0",
         "easyswoole/easyswoole": "3.x",
         "easyswoole/template": "^1.0",
         "easyswoole/verifycode": "^3.0",

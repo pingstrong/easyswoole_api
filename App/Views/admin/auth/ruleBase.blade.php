@@ -19,20 +19,33 @@
 							<div class="layui-input-block">
 								<input type="text" name="node" required lay-verify="required" placeholder="请输入节点标识" autocomplete="off" class="layui-input">
 							</div>
+							<div class="layui-form-mid layui-word-aux">后端模块和控制鉴权需要，唯一性避免重复</div>
 						</div>
 						<div class="layui-form-item">
 							<label class="layui-form-label">请求URI</label>
 							<div class="layui-input-block">
-								<input type="text" name="route_uri" required   placeholder="请输入请求URI" autocomplete="off" class="layui-input">
+								<input type="text" name="route_uri"    placeholder="请输入请求URI" autocomplete="off" class="layui-input">
 							</div>
 							<div class="layui-form-mid layui-word-aux">多个请使用分隔符&&，例如/backdata/index/a&&/backdata/index/b</div>
 						</div>
 						<div class="layui-form-item">
 							<label class="layui-form-label">请求处理器</label>
 							<div class="layui-input-block">
-								<input type="text" name="route_handler" required   placeholder="请输入/module/controller/method" autocomplete="off" class="layui-input">
+								<input type="text" name="route_handler"    placeholder="请输入/module/controller/method" autocomplete="off" class="layui-input">
 							</div>
 							<div class="layui-form-mid layui-word-aux">多个请使用分隔符&&，例如/Admin/Index/a&&/Admin/Index/b</div>
+						</div>
+						<div class="layui-form-item">
+							<label class="layui-form-label">菜单显示</label>
+							<div class="layui-input-block">
+								<input type="checkbox" name="is_menu" lay-skin="switch" checked lay-text="是|否">
+							</div>
+						</div>
+						<div class="layui-form-item">
+							<label for="" class="layui-form-label">图标</label>
+							<div class="layui-input-block">
+								<input type="text" id="iconPicker" name="icon" lay-filter="iconPicker" class="hide">
+							</div>
 						</div>
 						<div class="layui-form-item">
 							<label class="layui-form-label">是否启动</label>

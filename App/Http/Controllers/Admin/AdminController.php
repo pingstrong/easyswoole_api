@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Service\Admin\AdminLogService;
+use App\Service\Admin\Auth\AdminLogService;
 use App\Http\Controllers\BaseController;
+use App\Service\Admin\Auth\AdminRuleService;
 use easySwoole\Cache\Cache;
 use App\Utility\Message\Status;
 use EasySwoole\Template\Render;
-use App\Utility\Log\Log;
-use EasySwoole\Jwt\Jwt;
+use App\Common\AppFunc;
 
 /**
  * 后台控制器基类
@@ -16,27 +16,25 @@ use EasySwoole\Jwt\Jwt;
 class AdminController extends BaseController
 {
 	protected $auth;   // 保存了登录用户的信息
-	protected $role_group;
 	protected $jwt_data = [];
 	protected $middleware = [
 		\App\Http\Middleware\AdminMiddleware::class,
 		\App\Http\Middleware\LogMiddleware::class,
 	];
-
+	//当前账号授权请求权限
+	protected $account_rule_nodes = []; 
+	/**
+	 * 架构方法
+	 *
+	 * @author pingo
+	 * @created_at 00-00-00
+	 * @return void
+	 */
 	 public function initialize()
 	 {
-		 $jwt_data = $this->jwt_data = $this->request()->jwt_data;
-		 // 如果 用户组类 被删除的话则使用,则使用 根用户组(RoleGroup)
-		 try {
-			$role_group = 'RoleGroup' . $jwt_data['role_id'];
-			$class ="\\App\\Utility\\RoleGroup\\{$role_group}";
-			$this->role_group = new $class($jwt_data['role_id']);
-		} catch (\Exception $e) {
-			// 如果没有存在的 组类 则又可能有问题
-			Log::getInstance()->error("admin--checkToken:" . json_encode(['id'=>$jwt_data['id']], JSON_UNESCAPED_UNICODE) . "检查到 对应角色组类不存在");
-			$this->responseGP("/backdata/login", Status::CODE_RULE_ERR, '请登录在操作！');
-			return false;
-		}
+		$this->account_rule_nodes = $this->request()->account_rule_nodes;
+		$this->jwt_data = $this->auth = $this->request()->jwt_data;
+		  
 	 }
 	/**
 	 * 渲染数据
@@ -49,57 +47,10 @@ class AdminController extends BaseController
 	 */
 	public function render(string $template, array $data = [])
     {
-		//var_dump($template, $data);
-    	$data = array_merge(['role_group' => $this->role_group], $data);
+		 
+    	$data = array_merge(['account_rule_nodes' => $this->account_rule_nodes, 'is_super' => $this->jwt_data['is_super']], $data);
         $this->response()->write(Render::getInstance()->render($template, $data));
     }
-
-	// 检查token 是否合法
-	private function checkToken()
-	{
-		$r = $this->request();
-		$client_token = $r->getCookieParams('token');
-		 
-		try{
-			$JwtObject = Jwt::getInstance()
-			->setSecretKey(config("app.jwt.secret_key")) // 秘钥
-			->decode($client_token);
-		}catch(\Throwable $e){
-			$this->responseGP("/backdata/login", Status::CODE_RULE_ERR, '请登录在操作！');
-			return false;
-		}
-		
-		$status = $JwtObject->getStatus();
-		switch ($status) {
-			case 1:
-				# 验证通过
-				$this->auth = $jwt_data = $JwtObject->getData();
-				// 如果 用户组类 被删除的话则使用,则使用 根用户组(RoleGroup)
-				try {
-					$role_group = 'RoleGroup' . $jwt_data['role_id'];
-					$class ="\\App\\Utility\\RoleGroup\\{$role_group}";
-					$this->role_group = new $class($jwt_data['role_id']);
-				} catch (\Exception $e) {
-					// 如果没有存在的 组类 则又可能有问题
-					Log::getInstance()->error("admin--checkToken:" . json_encode(['id'=>$jwt_data['id']], JSON_UNESCAPED_UNICODE) . "检查到 对应角色组类不存在");
-					$this->responseGP("/backdata/login", Status::CODE_RULE_ERR, '请登录在操作！');
-				}
-				return true;
-				break;
-			/* case -1:
-				//无效
-				break;
-			case -2:
-				//token过期
-				break; */
-			default:
-				# code...
-				$this->responseGP("/backdata/login", Status::CODE_RULE_ERR, '请登录在操作！');
-				return false;
-				break;
-		}
-		 
-	}
 
 	// 操作记录
 	protected function Record()
@@ -112,35 +63,23 @@ class AdminController extends BaseController
 		AdminLogService::getInstance()->add($data);
 		return true;
 	}
-
-	// get 请求是否有权限访问
-	public function  hasRuleForGet($rule)
+	/**
+	 * 检查权限
+	 *
+	 * @author pingo
+	 * @created_at 00-00-00
+	 * @param [type] $rule
+	 * @return boolean
+	 */
+	public function hasRule($rule)
 	{
-		if(!$this->role_group->hasRule($rule)) {
-			$this->show404();
-			return false;
-		}
-
-		return true;
-	}
-
-	// post 请求是否有权限访问
-	public function  hasRuleForPost($rule)
-	{
-		if(!$this->role_group->hasRule($rule)) {
-			$this->writeJson(Status::CODE_RULE_ERR,'权限不足');
+		if(!in_array($rule, $this->account_rule_nodes) ){
+			$this->responseGP('/backdata/main', Status::CODE_RULE_ERR, '权限不足');
 			return false;
 		}
 		return true;
 	}
-
-
-	/* public function onRequest(?string $action): ?bool
-	{
-		//调用中间件、
-		return $this->checkToken() && $this->Record();
-	}
- */
+ 
 	public function dataJson($data)
 	{
         if (!$this->response()->isEndResponse()) {

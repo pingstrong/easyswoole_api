@@ -21,7 +21,7 @@
  * @created_at 00-00-00
  */
 use FastRoute\RouteCollector;
-use App\Service\Admin\AdminRuleService;
+use App\Service\Admin\Auth\AdminRuleService;
 use EasySwoole\EasySwoole\ServerManager;
 
 //常规路由
@@ -37,7 +37,8 @@ $FastRoute->addGroup('/backdata', function (RouteCollector $route) {
     $route->get('/version', '/Admin/Index/version');
     $route->get('/console', '/Admin/Index/console');
     $route->get('/dashboard', '/Admin/Index/dashboard');
-     
+    $route->get('/clearCache', '/Admin/Index/clearCache');
+    $route->get('/initMenu', '/Admin/Index/initMenu');
 });
 
 //获取后台路由配置

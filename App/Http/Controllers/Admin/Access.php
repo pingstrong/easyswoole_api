@@ -6,8 +6,8 @@ use App\Http\Controllers\BaseController;
 use App\Model\Admin\AdminUser as AuthModel;
 use App\Model\AdminRole as RoleModel;
 use App\Model\Admin\AdminLoginLog as LoginLogModel;
-use App\Service\Admin\AdminUserService;
-use App\Service\Admin\AdminLoginLogService;
+use App\Service\Admin\Auth\AdminUserService;
+use App\Service\Admin\Auth\AdminLoginLogService;
 use App\Utility\Message\Status;
 use EasySwoole\EasySwoole\Config;
 use EasySwoole\VerifyCode\Conf as CodeConf;
@@ -41,17 +41,17 @@ class Access extends BaseController
     {
          
         $request = $this->request();
-        $data    = $request->getRequestParam('uname', 'pwd', 'verify');
+        $data    = $request->getRequestParam('uname', 'pwd', 'captcha');
        
         $encry = Config::getInstance()->getConf('app.verify_encry');
 
-        if (md5($encry . strtoupper($data['verify']) . $encry) != $this->request()->getCookieParams('v-idea')) {
+        if (md5($encry . strtoupper($data['captcha']) . $encry) != $this->request()->getCookieParams('v-idea')) {
             $this->writeJson(Status::CODE_VERIFY_ERR, '验证码有误');
             AdminLoginLogService::getInstance()->add(['uname' => $data['uname']]);
             return;
         }
 
-        unset($data['verify']);
+        unset($data['captcha']);
 
         $service_result = AdminUserService::getInstance()->login($data['uname'], $data['pwd']);
         //$this->writeServiceResult($service_result);

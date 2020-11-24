@@ -4,8 +4,8 @@ namespace App\Http\Controllers\Admin;
 
 //use App\Model\AdminLoginLog as LoginLog;
 use App\Common\AppFunc;
-use App\Service\Admin\AdminLoginLogService;
-use App\Service\Admin\AdminRuleService;
+use App\Service\Admin\Auth\AdminLoginLogService;
+use App\Service\Admin\Auth\AdminRuleService;
 use \EasySwoole\LinuxDash\LinuxDash;
 use App\Utility\Message\Status;
 use App\Common\SystemInfo;
@@ -24,6 +24,7 @@ class Index extends AdminController
     {
 
         $sysinfo = SystemInfo::getAll();
+        
         return $this->render('admin.home.console', ['sysinfo'   => $sysinfo]);
     }
     /**
@@ -46,17 +47,50 @@ class Index extends AdminController
      */
     public function index()
     {
-        $rule_data =  AdminRuleService::getInstance()->getAllList();
-        $tree_data = AppFunc::arrayToTree($rule_data, 'pid');
-        $data      = AppFunc::arrayToTree($tree_data);
-        
         $this->render(
             'admin.home.index',
             [
                 'uname'     => $this->jwt_data['uname'], 
-                'menu_list' => $data,
-                
         ]);
+    }
+
+    /**
+     * 清除缓存
+     *
+     * @author pingo
+     * @created_at 00-00-00
+     * @return void
+     */
+    public function clearCache()
+    {
+        
+        $this->writeJson(Status::CODE_OK, lang("request_success"));
+    }
+    /**
+     * 获取菜单
+     *
+     * @author pingo
+     * @created_at 00-00-00
+     * @return void
+     */
+    public function initMenu()
+    {
+        //后台菜单
+        $menuInfo =  AdminRuleService::getInstance()->getRulesByRouteNodes($this->account_rule_nodes);
+        $menu = [
+            "homeInfo" => [
+                "title" => "首页",
+                "href"  => "/backdata/console"
+              ],
+              "logoInfo" => [
+                    "title" => "控制台",
+                    "image" => "/img/logo.png",
+                    "href"  => ""
+              ],
+              "menuInfo" => $menuInfo
+        ];
+      
+        $this->writeJson(Status::CODE_OK, lang("request_success"), $menu);
     }
 
     public function indexContext()

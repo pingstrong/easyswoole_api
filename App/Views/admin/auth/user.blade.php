@@ -18,31 +18,31 @@
         </div>
         <button class="layui-btn layui-btn-sm" data-type="reload">搜索</button>
 
-        @if($role_group->hasRule('auth.auth.add'))
+        @if(in_array('auth.auth.add', $account_rule_nodes))
             <button class="layui-btn layui-btn-sm layui-btn-normal" lay-event="add">添加管理员</button>
         @endif
     </script>
 
     <script type="text/html" id="barDemo">
-        @if($role_group->hasRule('auth.auth.set'))
+        @if(in_array('auth.auth.set', $account_rule_nodes))
             <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
         @endif
-        @if($role_group->hasRule('auth.auth.del'))
+        @if(in_array('auth.auth.del', $account_rule_nodes))
             <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
         @endif
     </script>
 
     <script type="text/html" id="switchTpl">
-        <input type="checkbox" name="status" value="@{{d.id}}" lay-skin="switch" @if(!$role_group->hasRule('auth.auth.set')) disabled="off" @endif lay-text="启用|禁用" lay-filter="status" @{{ d.status == 1 ? 'checked' : '' }}>
+        <input type="checkbox" name="status" value="@{{d.id}}" lay-skin="switch" @if(!in_array('auth.auth.set', $account_rule_nodes)) disabled="off" @endif lay-text="启用|禁用" lay-filter="status" @{{ d.status == 1 ? 'checked' : '' }}>
     </script>
 </div>
 @endsection
 
 
-@section('javascriptFooter')
+@section('footer_js')
 <script>
-layui.use('table', function(){
-  var table = layui.table, form = layui.form;
+layui.use(['table'], function(){
+  var table = layui.table, form = layui.form, $ = layui.jquery;
 
   var datatable = table.render({
     elem: '#test'
@@ -53,8 +53,8 @@ layui.use('table', function(){
     ,title: '用户数据表'
     ,cols: [[
       {field:'id', title:'ID', width:80, fixed: 'left', unresize: true, sort: true}
-      ,{field:'uname', title:'用户名', width:120  @if($role_group->hasRule('auth.auth.set')) , event:'edit_uname' @endif }
-      ,{field:'display_name', title:'真实用户名' @if($role_group->hasRule('auth.auth.set')), event:'edit_name' @endif}
+      ,{field:'uname', title:'用户名', width:120  @if(in_array('auth.auth.set', $account_rule_nodes)) , event:'edit_uname' @endif }
+      ,{field:'display_name', title:'真实用户名' @if(in_array('auth.auth.set', $account_rule_nodes)), event:'edit_name' @endif}
       ,{field:'role_name', title:'所属组'}
       ,{field:'created_at', title:'创建时间', }
       ,{field:'logined_at', title:'最近登录时间'}

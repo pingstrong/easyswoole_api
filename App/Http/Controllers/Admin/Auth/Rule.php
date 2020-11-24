@@ -5,26 +5,27 @@ namespace App\Http\Controllers\Admin\Auth;
 use App\Http\Controllers\Admin\AdminController;
 use App\Common\AppFunc;
 use App\Utility\Log\Log;
-use App\Service\Admin\AdminRuleService;
+use App\Service\Admin\Auth\AdminRuleService;
 use App\Utility\Message\Status;
 
 class Rule extends AdminController
 {
     private $rule_rule      = 'auth.rule';
     private $rule_rule_view = 'auth.rule.view';
-    private $rule_rule_add  = 'auth.rule.add';
+    private $rule_rule_addroot  = 'auth.rule.addroot';
+    private $rule_rule_addnode  = 'auth.rule.addnode';
     private $rule_rule_set  = 'auth.rule.set';
     private $rule_rule_del  = 'auth.rule.del';
     public function index()
     {
-        if(!$this->hasRuleForGet($this->rule_rule_view)) return ;
-
+        if(!$this->hasRule($this->rule_rule_view)) return ;
+         
         $this->render('admin.auth.rule');
     }
 
     public function getAll()
     {
-        if(!$this->hasRuleForPost($this->rule_rule_view)) return ;
+        if(!$this->hasRule($this->rule_rule_view)) return ;
 
         $rule_data =  AdminRuleService::getInstance()->getAllList();
 
@@ -40,7 +41,7 @@ class Rule extends AdminController
     private function fieldInfo()
     {
         $request = $this->request();
-        $data    = $request->getRequestParam('name', 'node', 'status', 'route_uri', 'route_handler');
+        $data    = $request->getRequestParam('name', 'node', 'status', 'route_uri', 'route_handler', 'is_menu', 'icon');
 
         $validate = new \EasySwoole\Validate\Validate();
         $validate->addColumn('name')->required();
@@ -58,14 +59,14 @@ class Rule extends AdminController
 
     public function add()
     {
-        if(!$this->hasRuleForGet($this->rule_rule_add)) return ;
+        if(!$this->hasRule($this->rule_rule_addroot)) return ;
 
         $this->render('admin.auth.ruleAdd');
     }
 
     public function addData()
     {
-        if(!$this->hasRuleForPost($this->rule_rule_add)) return ;
+        if(!$this->hasRule($this->rule_rule_addroot)) return ;
 
         $data = $this->fieldInfo();
         if (!$data) {
@@ -82,7 +83,7 @@ class Rule extends AdminController
     public function addChild()
     {
 
-        if(!$this->hasRuleForGet($this->rule_rule_add)) return ;
+        if(!$this->hasRule($this->rule_rule_addnode)) return ;
 
         $id = $this->request()->getRequestParam('id');
         $info = AdminRuleService::getInstance()->getById($id);
@@ -95,7 +96,7 @@ class Rule extends AdminController
 
     public function addChildData()
     {
-        if(!$this->hasRuleForPost($this->rule_rule_add)) return ;
+        if(!$this->hasRule($this->rule_rule_addnode)) return ;
 
         $data = $this->fieldInfo();
         if (!$data) {
@@ -115,7 +116,7 @@ class Rule extends AdminController
     // 修改数据的页面
     public function edit()
     {
-        if(!$this->hasRuleForGet($this->rule_rule_set)) return ;
+        if(!$this->hasRule($this->rule_rule_set)) return ;
 
         $id = $this->request()->getRequestParam('id');
 
@@ -137,7 +138,7 @@ class Rule extends AdminController
     // 修改数据
     public function editData()
     {
-        if(!$this->hasRuleForPost($this->rule_rule_set)) return ;
+        if(!$this->hasRule($this->rule_rule_set)) return ;
 
         $data = $this->fieldInfo();
         if (!$data) {
@@ -157,7 +158,7 @@ class Rule extends AdminController
     // 单字段修改
     public function set()
     {
-        if(!$this->hasRuleForPost($this->rule_rule_set)) return ;
+        if(!$this->hasRule($this->rule_rule_set)) return ;
 
         $request  = $this->request();
         $data     = $request->getRequestParam('id', 'key', 'value');
@@ -165,7 +166,7 @@ class Rule extends AdminController
 
         $validate->addColumn('key')->required()->func(function ($params, $key) {
             return $params instanceof \EasySwoole\Spl\SplArray
-            && 'key' == $key && in_array($params[$key], ['status', 'node']);
+            && 'key' == $key && in_array($params[$key], ['status', 'node', 'is_menu']);
         }, '请勿乱操作');
 
         $validate->addColumn('id')->required();
@@ -188,7 +189,7 @@ class Rule extends AdminController
 
     public function del()
     {
-        if(!$this->hasRuleForPost($this->rule_rule_del)) return ;
+        if(!$this->hasRule($this->rule_rule_del)) return ;
 
         $request = $this->request();
         $id      = $request->getRequestParam('id');

@@ -21,7 +21,7 @@ class ApiFormat
      * @param array $data
      * @return array
      */
-    public static function api(int $code = Status::CODE_OK, string $msg = 'ok', array $data = []): array
+    public static function api(int $code = Status::CODE_OK, string $msg = 'ok',  $data = []): array
     {
         return ['code' => $code, 'msg' => $msg, 'data' => $data];
     }

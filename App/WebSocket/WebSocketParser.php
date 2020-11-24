@@ -26,61 +26,63 @@ class WebSocketParser implements ParserInterface
      */
     public function decode($raw, $client) : ? Caller
     {
-        //Ping数据包
-        if($raw === 'PING'){
-            return null;
-        }
-        // 解析 客户端原始消息
-        //通讯消息体规范 {"uri": "/Chat/User/getInfo", "params": {'params1': 1, "params2":2}}
-        $data = json_decode($raw, true);
-        if (!is_array($data)) {
-            //echo "decode message error! \n";
-            return null;
-        }
-
-        $controller = "Index";
-        $action = "index";
-        if(!empty($data['uri'])){
-            $mca = array_filter(explode("/", trimall($data['uri'])));
-            if(count($mca) === 1){
-                $controller = array_shift($mca);
-                $action = "index";
-            }else{
-                $controller = implode("\\", array_slice($mca, 0, -1)); 
-                $action = end($mca);
-            }
-        };
-         
         // new 调用者对象
         $caller =  new Caller();
-        /**
-         * 设置被调用的类 这里会将ws消息中的 class 参数解析为具体想访问的控制器
-         * 如果更喜欢 event 方式 可以自定义 event 和具体的类的 map 即可
-         * 注 目前 easyswoole 3.0.4 版本及以下 不支持直接传递 class string 可以通过这种方式
-         */
-        $class = '\\App\\WebSocket\\Controller\\'. $controller;
-        if(!class_exists($class)){
-            $class = '\\App\\WebSocket\\Controller\\Index';
-            $action = 'uriNotFound';
-        };
+        $controller_space = '\App\WebSocket\Controller';
+        //Ping数据包
+        if($raw === 'PING'){
+            $caller->setControllerClass("{$controller_space}\\Index");
+            $caller->setAction('heartbeat');
+        }else{
+            
+            // 解析 客户端原始消息
+            //通讯消息体规范 {"uri": "/Chat/User/getInfo", "params": {'params1': 1, "params2":2}}
+            $data = json_decode($raw, true);
+            $controller = "Index";
+            $action = "index";
 
-        $caller->setControllerClass($class);
-
-        // 提供一个事件风格的写法
-//         $eventMap = [
-//             'index' => Index::class
-//         ];
-//         $caller->setControllerClass($eventMap[$data['class']] ?? Index::class);
-
-        // 设置被调用的方法
-        $caller->setAction($action);
-        // 检查是否存在args
-        if (isset($data['params']) && is_array($data['params'])) {
-            $args = $data['params'];
+            if (is_array($data)) {
+                //echo "decode message error! \n";
+                if(!empty($data['uri'])){
+                    $mca = array_filter(explode("/", trimall($data['uri'])));
+                    if(count($mca) === 1){
+                        $controller = array_shift($mca);
+                        $action = "index";
+                    }else{
+                        $controller = implode("\\", array_slice($mca, 0, -1)); 
+                        $action = end($mca);
+                    }
+                };
+            }
+            /**
+             * 设置被调用的类 这里会将ws消息中的 class 参数解析为具体想访问的控制器
+             * 如果更喜欢 event 方式 可以自定义 event 和具体的类的 map 即可
+             * 注 目前 easyswoole 3.0.4 版本及以下 不支持直接传递 class string 可以通过这种方式
+             */
+            $class = '\\App\\WebSocket\\Controller\\'. $controller;
+            if(!class_exists($class)){
+                $class = '\\App\\WebSocket\\Controller\\Index';
+                $action = 'uriNotFound';
+            };
+    
+            $caller->setControllerClass($class);
+    
+            // 提供一个事件风格的写法
+    //         $eventMap = [
+    //             'index' => Index::class
+    //         ];
+    //         $caller->setControllerClass($eventMap[$data['class']] ?? Index::class);
+    
+            // 设置被调用的方法
+            $caller->setAction($action);
+            // 检查是否存在args
+            if (isset($data['params']) && is_array($data['params'])) {
+                $args = $data['params'];
+            }
+            
+            // 设置被调用的Args
+            $caller->setArgs($args ?? (array)$data);
         }
-        
-        // 设置被调用的Args
-        $caller->setArgs($args ?? $data);
         return $caller;
     }
     /**

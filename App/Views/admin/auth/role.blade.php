@@ -4,7 +4,7 @@
 <div class="white p20">
     <table class="layui-hide" id="test" lay-filter="test"></table>
     <script type="text/html" id="toolbarDemo">
-        @if($role_group->hasRule('auth.role.add'))
+        @if(in_array('auth.role.add', $account_rule_nodes))
             <div class="layui-btn-container">
                 <button class="layui-btn layui-btn-normal layui-btn-sm" lay-event="add">添加角色组</button>
             </div>
@@ -12,14 +12,14 @@
     </script>
 
     <script type="text/html" id="barDemo">
-        @if($role_group->hasRule('auth.role.rule'))
+        @if(in_array('auth.role.rule', $account_rule_nodes))
             <a class="layui-btn layui-btn-warm layui-btn-xs" lay-event="editRule">变更权限</a>
         @endif
-        @if($role_group->hasRule('auth.role.set'))
+        @if(in_array('auth.role.set', $account_rule_nodes))
             <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
         @endif
 
-        @if($role_group->hasRule('auth.role.del'))
+        @if(in_array('auth.role.del', $account_rule_nodes))
             <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
         @endif
     </script>
@@ -27,11 +27,11 @@
 @endsection
 
 
-@section('javascriptFooter')
+@section('footer_js')
 <script>
 
-    layui.use('table', function(){
-    var table = layui.table;
+    layui.use(['table'], function(){
+    var table = layui.table, $ = layui.jquery;
 
     var datatable = table.render({
         elem: '#test'
@@ -42,7 +42,7 @@
         ,cols: [[
         {field:'id', title:'ID', width:80, fixed: 'left', unresize: true, sort: true}
         ,{field:'name', title:'角色组', width:220}
-        ,{field:'detail', title:'描述' @if($role_group->hasRule('auth.role.set')), edit: 'text' , event:'edit_detail' @endif}
+        ,{field:'detail', title:'描述' @if(in_array('auth.role.set', $account_rule_nodes)), edit: 'text' , event:'edit_detail' @endif}
         ,{field:'created_at', title:'创建时间'}
         ,{fixed: 'right', title:'操作', toolbar: '#barDemo', width: 250}
         ]]
@@ -135,7 +135,7 @@
                 layer.open({
                     type: 2,
                     maxmin: true, // 显示最大最小化按钮
-                    area: ['500px', '450px'],
+                    area: ['50%', '60%'],
                     title: '变更权限',
                     content: '/backdata/role/edit_ruleget/' + data.id,
                 });

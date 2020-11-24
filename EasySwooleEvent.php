@@ -169,6 +169,7 @@ class EasySwooleEvent implements Event
                 }
             }
             Config::getInstance()->setConf(\App\Consts::SYSTEM_LANG, $lang_data);
+            Config::getInstance()->setConf(\App\Consts::SYSTEM_DEFAULT_LANG, config("app.lang"));
         }
     }
 

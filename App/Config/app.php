@@ -1,8 +1,9 @@
 <?php
 return [
     'debug'         =>  true,
-    'verify'        => 'j#m@z.a',     // 密码加密使用
-    'verify_encry'  => 'jmzishaoren', // 验证码加密使用
+    'lang'          => 'zh', //默认语言包
+    'verify'        => 'j#m@z.aPwqQQ18',     // 密码加密使用
+    'verify_encry'  => 'tOForPingo1688', // 验证码加密使用
     'token'         => '#jdAJDi(DS()@#D213S*dsa%!@',   // token使用
 	'cache' => [
         'driver'        => 'files', // 驱动名称   不同的驱动 下方的参数可以变更。

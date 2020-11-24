@@ -34,9 +34,8 @@ Kafka
 Mysql|Mariadb
 EleasticSearch
 ~~~
-
-~~~
-#依赖安装
+ 
+# 依赖安装
  
  composer install && composer dump-autoload
 

@@ -3,7 +3,7 @@
 @section('body-title')
     {{-- <div class="layui-card-header">添加用户</div> --}}
 @endsection
-@section('javascriptFooter')
+@section('footer_js')
 <script>
 layui.use('form', function(){
 	var form = layui.form, $ = layui.jquery,form_field;

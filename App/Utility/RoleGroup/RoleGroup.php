@@ -3,7 +3,7 @@
 namespace App\Utility\RoleGroup;
 use easySwoole\Cache\Cache;
  
-use App\Service\Admin\AdminRuleService;
+use App\Service\Admin\Auth\AdminRuleService;
 
 
 class RoleGroup 

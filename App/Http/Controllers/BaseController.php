@@ -21,6 +21,23 @@ abstract class BaseController extends Controller
     protected $except = [];
     //仅需验证中间件的方法
     protected $only = [];
+    //swoole原始http请求对象
+    protected  $swoole_http_request = null;
+    //当前请求参数 get+post
+    protected $request_params = [];
+    //当前请求Server信息
+    protected $request_server = [];
+    //当前请求头
+    protected $request_header = [];
+    //当前请求cookie
+    protected $request_cookie = [];
+    //请求原始数据体
+    protected $request_raw = [];
+    //请求Get参数
+    protected $request_get = [];
+    //请求post 参数
+    protected $request_post = [];
+
 
     /**
      * 初始化控制器
@@ -49,7 +66,7 @@ abstract class BaseController extends Controller
         $this->render('default.404');
     }
 
-    public function writeJson($statusCode = 0, $msg = null, $data = null)
+    public function writeJson($statusCode = 0, $msg = '', $data = [])
     {
         if (!$this->response()->isEndResponse()) {
 
@@ -152,10 +169,19 @@ abstract class BaseController extends Controller
         $this->writeJson(Status::CODE_ERR, "请求方法出错actionNotFound！！！", $data);
         //$this->response()->write('404 not found');
     }
-
+    
     protected function onRequest(?string $action): ?bool
 	{
-          
+        //初始化参数
+        $this->swoole_http_request  = $this->request()->getSwooleRequest();
+        $this->request_params       = $this->request()->getRequestParam();
+        $this->request_server       = $this->request()->getServerParams();
+        $this->request_header       = $this->request()->getHeaders();
+        $this->request_cookie       = $this->request()->getCookieParams();
+        $this->request_raw          = $this->request()->getBody()->__toString();
+        $this->request_get          = $this->request()->getQueryParams();
+        $this->request_post         = $this->request()->getParsedBody();
+        
         //调用中间件、
         if(empty($this->middleware)) return true;
         if(in_array($action, $this->except) || (!empty($this->only) && !in_array($action, $this->only))) return true;
@@ -167,6 +193,7 @@ abstract class BaseController extends Controller
             $this->initialize();
             return true;
         }
+         
         return false;
     }
     /**

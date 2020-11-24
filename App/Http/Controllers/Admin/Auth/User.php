@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Admin\Auth;
 
 use App\Http\Controllers\Admin\AdminController;
-use App\Service\Admin\AdminUserService;
-use App\Service\Admin\AdminRoleService;
+use App\Service\Admin\Auth\AdminUserService;
+use App\Service\Admin\Auth\AdminRoleService;
 use App\Utility\Log\Log;
 use App\Utility\Message\Status;
 
@@ -17,7 +17,7 @@ class User extends AdminController
     private $rule_auth_del  = 'auth.auth.del';
     public function index()
     {
-        if(!$this->hasRuleForGet($this->rule_auth_view)) return ;
+        if(!$this->hasRule($this->rule_auth_view)) return ;
 
         $this->render('admin.auth.user');
     }
@@ -25,7 +25,7 @@ class User extends AdminController
     // 获取用户数
     public function getAll()
     {
-        if(!$this->hasRuleForPost($this->rule_auth_view)) return ;
+        if(!$this->hasRule($this->rule_auth_view)) return ;
 
         $data = $this->getPage();
         $service_result = AdminUserService::getInstance()->getPageList($data['page'], $data['limit']);
@@ -57,7 +57,7 @@ class User extends AdminController
 
     public function add()
     {
-        if(!$this->hasRuleForGet($this->rule_auth_add)) return ;
+        if(!$this->hasRule($this->rule_auth_add)) return ;
 
         $role_data = AdminRoleService::getInstance()->getAllList();
 
@@ -66,7 +66,7 @@ class User extends AdminController
 
     public function addData()
     {
-        if(!$this->hasRuleForPost($this->rule_auth_add)) return ;
+        if(!$this->hasRule($this->rule_auth_add)) return ;
 
         $data = $this->fieldInfo();
         if (!$data) {
@@ -86,7 +86,7 @@ class User extends AdminController
     // 多字段修改
     public function edit()
     {
-        if(!$this->hasRuleForGet($this->rule_auth_set)) return ;
+        if(!$this->hasRule($this->rule_auth_set)) return ;
 
         $id        = $this->request()->getRequestParam('id');
         $role_data = AdminRoleService::getInstance()->getAllList();
@@ -95,20 +95,22 @@ class User extends AdminController
             $this->show404();
             return;
         }
+        
         $this->render('admin.auth.userEdit', ['id' => $id, 'role_data' => $role_data, 'user_data' => $user_data]);
     }
 
     // 多字段修改
     public function editData()
     {
-        if(!$this->hasRuleForPost($this->rule_auth_set)) return ;
+        if(!$this->hasRule($this->rule_auth_set)) return ;
 
         $data = $this->fieldInfo();
         if (!$data) {
             return;
         }
         $id = $this->request()->getRequestParam('id');
-
+        $user_data = AdminUserService::getInstance()->getUserById($id);
+        $data['pwd'] = encrypt($data['pwd'], $user_data['encry']);
         if (AdminUserService::getInstance()->setUserById($id, $data)) {
             $this->writeJson(Status::CODE_OK);
         } else {
@@ -128,7 +130,7 @@ class User extends AdminController
     public function editPwdData()
     {
         $info = $this->request()->getRequestParam('old_pwd','pwd');
-         
+        
         if (encrypt($info['old_pwd'], $this->auth['encry']) == $this->auth['pwd']) {
             $new_pwd = encrypt($info['pwd'], $this->auth['encry']);
             if(AdminUserService::getInstance()->setUserById($this->auth['id'], ['pwd' => $new_pwd])) {
@@ -154,7 +156,7 @@ class User extends AdminController
     // 单字段修改
     public function set()
     {
-        if(!$this->hasRuleForPost($this->rule_auth_set)) return ;
+        if(!$this->hasRule($this->rule_auth_set)) return ;
 
         $request  = $this->request();
         $data     = $request->getRequestParam('id', 'key', 'value');
@@ -182,7 +184,7 @@ class User extends AdminController
 
     public function del()
     {
-        if(!$this->hasRuleForPost($this->rule_auth_del)) return ;
+        if(!$this->hasRule($this->rule_auth_del)) return ;
 
         $request = $this->request();
         $id      = $request->getRequestParam('id');

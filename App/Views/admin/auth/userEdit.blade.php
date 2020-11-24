@@ -1,7 +1,7 @@
 @extends('admin.auth.userBase')
 
 
-@section('javascriptFooter')
+@section('footer_js')
 <script>
 layui.use('form', function(){
 	var form = layui.form, $ = layui.jquery,form_field;

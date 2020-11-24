@@ -4,8 +4,8 @@ namespace App\Http\Controllers\Admin\Auth;
 
 use App\Http\Controllers\Admin\AdminController;
 use App\Common\AppFunc;
-use App\Service\Admin\AdminRoleService;
-use App\Service\Admin\AdminRuleService;
+use App\Service\Admin\Auth\AdminRoleService;
+use App\Service\Admin\Auth\AdminRuleService;
 use App\Utility\Log\Log;
 use App\Utility\Message\Status;
 
@@ -17,16 +17,17 @@ class Role extends AdminController
     private $rule_role_set  = 'auth.role.set';
     private $rule_role_del  = 'auth.role.del';
     private $rule_role_rule = 'auth.role.rule';
+    
     public function index()
     {
-        if(!$this->hasRuleForGet($this->rule_role_view)) return ;
+        if(!$this->hasRule($this->rule_role_view)) return ;
 
         $this->render('admin.auth.role');
     }
 
     public function getAll()
     {
-        if(!$this->hasRuleForPost($this->rule_role_view)) return ;
+        if(!$this->hasRule($this->rule_role_view)) return ;
 
         $data = $this->getPage();
 
@@ -61,14 +62,14 @@ class Role extends AdminController
 
     public function add()
     {
-        if(!$this->hasRuleForGet($this->rule_role_add)) return ;
+        if(!$this->hasRule($this->rule_role_add)) return ;
         $role_data = AdminRoleService::getInstance()->getAllList();
         $this->render('admin.auth.roleAdd',['role_data'=>$role_data]);
     }
 
     public function addData()
     {
-        if(!$this->hasRuleForPost($this->rule_role_add)) return ;
+        if(!$this->hasRule($this->rule_role_add)) return ;
 
         $data = $this->fieldInfo();
         if (!$data) {
@@ -85,7 +86,7 @@ class Role extends AdminController
 
     public function edit()
     {
-        if(!$this->hasRuleForGet($this->rule_role_set)) return ;
+        if(!$this->hasRule($this->rule_role_set)) return ;
 
         $id = $this->request()->getRequestParam('id');
 
@@ -97,7 +98,7 @@ class Role extends AdminController
 
     public function editData()
     {
-        if(!$this->hasRuleForPost($this->rule_role_set)) return ;
+        if(!$this->hasRule($this->rule_role_set)) return ;
 
         $data = $this->fieldInfo();
         if (!$data) {
@@ -116,7 +117,7 @@ class Role extends AdminController
 
     public function set()
     {
-        if(!$this->hasRuleForPost($this->rule_role_set)) return ;
+        if(!$this->hasRule($this->rule_role_set)) return ;
 
         $request  = $this->request();
         $data     = $request->getRequestParam('id', 'key', 'value');
@@ -135,7 +136,7 @@ class Role extends AdminController
             return;
         }
 
-        $bool = AdminRoleService::getInstance()->setById($data['id'], [$data['key'], $data['value']]);
+        $bool = AdminRoleService::getInstance()->setById($data['id'], [$data['key'] => $data['value']]);
         if ($bool) {
             $this->writeJson(Status::CODE_OK);
         } else {
@@ -146,7 +147,7 @@ class Role extends AdminController
 
     public function del()
     {
-        if(!$this->hasRuleForPost($this->rule_role_del)) return ;
+        if(!$this->hasRule($this->rule_role_del)) return ;
 
         $request = $this->request();
         $id      = $request->getRequestParam('id');
@@ -161,7 +162,7 @@ class Role extends AdminController
 
     public function editRule()
     {
-        if(!$this->hasRuleForGet($this->rule_role_view)) return ;
+        if(!$this->hasRule($this->rule_role_view)) return ;
 
         $rule_data = AdminRuleService::getInstance()->getAllList(['id', 'name as title', 'name', 'pid'], ['status' => 1]);
          
@@ -174,7 +175,7 @@ class Role extends AdminController
 
     public function editRuleData()
     {
-        if(!$this->hasRuleForPost($this->rule_role_rule)) return ;
+        if(!$this->hasRule($this->rule_role_rule)) return ;
 
         $info = $this->request()->getRequestParam('id', 'rules_checked', 'rules');
          

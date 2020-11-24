@@ -8,6 +8,7 @@
 
 namespace App\WebSocket\Controller;
 
+use App\Utility\Message\Status;
 use App\Utility\Pool\MysqlPool;
 use App\Utility\Pool\RedisPool;
 use EasySwoole\EasySwoole\ServerManager;
@@ -24,16 +25,30 @@ use EasySwoole\Socket\AbstractInterface\Controller;
  */
 class Index extends Base
 {
-
+    /**
+     * 默认请求
+     *
+     * @author pingo
+     * @created_at 00-00-00
+     * @return void
+     */
     public function index()
     {
-        $info = $this->caller()->getArgs();
-        //$info = $info['data'];
         $data = [
-            'server_id' => time(),
-            'data' =>  $info
+            'request_data'  =>  $this->raw_params
         ];
-        $this->response()->setMessage(json_encode($data));
+        $this->send(Status::CODE_PARAMS_FAIL, lang('request_not_found'), $data);
+    }
+    /**
+     * 心跳检测
+     *
+     * @author pingo
+     * @created_at 00-00-00
+     * @return void
+     */
+    function heartbeat()
+    {
+        $this->response()->setMessage('PONG');
     }
 
     public function chatMessage()

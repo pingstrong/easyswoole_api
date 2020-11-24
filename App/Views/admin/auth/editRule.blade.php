@@ -1,15 +1,23 @@
 @extends('layouts.admin')
-
+@section('header_style')
+<link rel="stylesheet" href="/css/public.css" media="all">
+@endsection
 @section('body')
-<div id="rule" class="tree-rule-more"></div>
-
-<div class="layui-btn-container p20">
-  	<button type="button" class="layui-btn layui-btn-sm" lay-demo="save">保存</button>
+<div class="layuimini-container">
+  <div class="layuimini-main">
+    <div id="rule" class="tree-rule-more"></div>
+    
+      <div class="" style="margin:20px 10px">
+          <button class="layui-btn layui-btn-normal" lay-demo="save">保存</button>
+      </div>
+ 
+     
+  </div>
 </div>
 @endsection
 
 
-@section('javascriptFooter')
+@section('footer_js')
 <!-- 注意：如果你直接复制所有代码到本地，上述js路径需要改成你本地的 -->
 <script>
 var rules = [], rules_checked =[];
@@ -31,75 +39,8 @@ layui.use(['tree', 'util'], function(){
   ,layer = layui.layer
   ,util = layui.util
   ,data = @json($data);
- 
- //模拟数据2
- var data2 = [{
-    title: '早餐'
-    ,id: 1
-    ,children: [{
-      title: '油条'
-      ,id: 5
-    },{
-      title: '包子'
-      ,id: 6
-    },{
-      title: '豆浆'
-      ,id: 7
-    }]
-  },{
-    title: '午餐'
-    ,id: 2
-    ,checked: true
-    ,children: [{
-      title: '藜蒿炒腊肉'
-      ,id: 8
-    },{
-      title: '西湖醋鱼'
-      ,id: 9
-    },{
-      title: '小白菜'
-      ,id: 10
-    },{
-      title: '海带排骨汤'
-      ,id: 11
-    }]
-  },{
-    title: '晚餐'
-    ,id: 3
-    ,children: [{
-      title: '红烧肉'
-      ,id: 12
-      ,fixed: true
-    },{
-      title: '番茄炒蛋'
-      ,id: 13
-    }]
-  },{
-    title: '夜宵'
-    ,id: 4
-    ,children: [{
-      title: '小龙虾'
-      ,id: 14
-      ,checked: true
-    },{
-      title: '香辣蟹'
-      ,id: 15
-      ,disabled: true
-    },{
-      title: '烤鱿鱼'
-      ,id: 16
-    }]
-  }];
-   //仅节点左侧图标控制收缩
-   tree.render({
-    elem: '#rule'
-    ,data: data2
-    ,onlyIconControl: true  //是否仅允许节点左侧图标控制展开收缩
-    ,click: function(obj){
-      layer.msg(JSON.stringify(obj.data));
-    }
-  });
-  //基本演示
+    
+  //基本
   tree.render({
     elem: '#rule'
     ,data: data
