@@ -1,201 +1,661 @@
-@extends('layouts.admin')
+@extends('layouts.admin_child')
 
-@section('stylesheet')
-<link rel="stylesheet" href="/layui/css/layui.css"  media="all">
+@section('header_style')
+ 
 @endsection
 
 @section('body')
- 
-@include('template.admin.form.image',[
-            'data'=>[
-                'name'=>'thumb',
-                'value'=> $thumb??'',
-                'show'=> $thumb??0,
-                'title'=>'网站LOGO',
-                'tips'=>'',
-                'rq'=>1,
-                'place'=>1,
-                'obj'=>'thumbUpload'
-         ]])
-<table class="layui-hide" id="test" lay-filter="test"></table>
+  
+<div class="layui-tab layui-tab-brief" lay-filter="docDemoTabBrief">
+  <ul class="layui-tab-title">
+    <li class="layui-this">网站设置</li>
+    <li>短信配置</li>
+    <li>支付配置</li>
+    <li>公众号设置</li>
+    <li>小程序设置</li>
+    <li>App设置</li>
+    <li>协议隐私</li>
+    <li>联系方式</li>
+    <li>文件存储</li>
+  </ul>
+  <div class="layui-tab-content" style="height: auto;">
+    <!-- 网站设置 -->
+    <div class="layui-tab-item layui-show">
+      <form class="layui-form" action="" lay-filter="FormWeb">
+            <!-- 配置项标识ID -->
+            <input type="hidden" name="key" value="web">
+            <div class="layui-form-item">
+                <label class="layui-form-label">网站名称</label>
+                <div class="layui-input-block">
+                  
+                    <input type="text" name="name"   autocomplete="off" placeholder="请输入标题" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+              <label class="layui-form-label">网站域名URL</label>
+              <div class="layui-input-block">
+                    <input type="text" name="base_url"   autocomplete="off" placeholder="请输入" class="layui-input">
+                </div>
+            </div>
+              <div class="layui-form-item">
+                <label class="layui-form-label">行业所在</label>
+                <div class="layui-input-block">
+                    <select name="business" >
+                        <option value=""></option>
+                        <option value="0">电子商务</option>
+                        <option value="1" selected="">游戏</option>
+                        <option value="2">媒体</option>
+                        <option value="3">广告营销</option>
+                        <option value="4">数据服务</option>
+                        <option value="5">医疗健康</option>
+                        <option value="6">生活服务</option>
+                        <option value="7">020</option>
+                        <option value="8">金融</option>
+                        <option value="9">制造业</option>
+                        <option value="10">其他</option>
+                    </select>
+                </div>
+            </div>
+            <div class="layui-form-item">
+              <label class="layui-form-label">营业时间</label>
+              <div class="layui-input-block">
+                  <input type="checkbox" name="worktime[day]"  title="白天">
+                  <input type="checkbox" name="worktime[night]"  title="晚上">
+                  <input type="checkbox" name="worktime[all]" title="24小时">
+              </div>
+          </div>
+          <div class="layui-form-item">
+            <label class="layui-form-label">LOGO</label>
+            <div class="layui-input-block">
+                @component('template.admin.form.image', ['name' => 'logo', 'value' => $setting['web']['logo']?? ""])@endcomponent
+            </div>
+         </div>
+          <div class="layui-form-item">
+              <label class="layui-form-label">状态</label>
+              <div class="layui-input-block">
+                  <input type="checkbox" name="close" lay-skin="switch" lay-text="开|关">
+              </div>
+          </div>
 
-<script type="text/html" id="toolbarDemo">
-  <div class="layui-btn-container">
-    <button class="layui-btn layui-btn-sm" lay-event="getCheckData">获取选中行数据</button>
-    <button class="layui-btn layui-btn-sm" lay-event="getCheckLength">获取选中数目</button>
-    <button class="layui-btn layui-btn-sm" lay-event="isAll">验证是否全选</button>
+          <div class="layui-form-item">
+              <label class="layui-form-label">图片存储</label>
+              <div class="layui-input-block">
+                  <input type="radio" name="storage" value="0" title="本地" checked="">
+                  <input type="radio" name="storage" value="1" title="七牛">
+                  <input type="radio" name="storage" value="2" title="阿里">
+                  <input type="radio" name="storage" value="3" title="腾讯">
+              </div>
+          </div>
+          <div class="layui-form-item layui-form-text">
+              <label class="layui-form-label">介绍</label>
+              <div class="layui-input-block">
+                  <textarea placeholder="请输入内容" name="description" class="layui-textarea"></textarea>
+              </div>
+          </div>
+        
+          <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button class="layui-btn" lay-submit="" lay-filter="FormSbtn">立即提交</button>
+                <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+            </div>
+        </div>
+      </form>
+    </div>
+    <!-- 短信设置 -->
+    <div class="layui-tab-item">
+      <blockquote class="layui-elem-quote layui-text">
+         目前集成常规云短信服务商，其他渠道另设置！
+      </blockquote>
+      <form class="layui-form" action="" lay-filter="FormSms">
+        <!-- 配置项标识ID -->
+        <input type="hidden" name="key" value="sms">
+        <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+          <legend>阿里云</legend>
+        </fieldset>
+        <div class="layui-form-item">
+            <label class="layui-form-label">AppId</label>
+            <div class="layui-input-block">
+                <input type="text" name="aliyun[appid]"  lay-reqtext="必填项，岂能为空？" placeholder="请输入" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+          <div class="layui-form-item">
+              <label class="layui-form-label">AppKey</label>
+              <div class="layui-input-block">
+                  <input type="text" name="aliyun[appkey]"  lay-reqtext="必填项，岂能为空？" placeholder="请输入" autocomplete="off" class="layui-input">
+              </div>
+          </div>
+          <div class="layui-form-item">
+            <label class="layui-form-label">短信签名</label>
+            <div class="layui-input-block">
+                <input type="text" name="aliyun[sign]"  lay-reqtext="必填项，岂能为空？" placeholder="请输入" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+          <label class="layui-form-label">验证类模板</label>
+          <div class="layui-input-block">
+              <input type="text" name="aliyun[code_tpl]"  lay-reqtext="必填项，岂能为空？" placeholder="请输入" autocomplete="off" class="layui-input">
+          </div>
+        </div>
+        <div class="layui-form-item">
+          <label class="layui-form-label">通知类模板</label>
+          <div class="layui-input-block">
+              <input type="text" name="aliyun[notice_tpl]"  lay-reqtext="必填项，岂能为空？" placeholder="请输入" autocomplete="off" class="layui-input">
+          </div>
+        </div>
+        <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+          <legend>腾讯云</legend>
+        </fieldset>
+        <div class="layui-form-item">
+            <label class="layui-form-label">AppId</label>
+            <div class="layui-input-block">
+                <input type="text" name="tencent[appid]"  lay-reqtext="必填项，岂能为空？" placeholder="请输入" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+          <div class="layui-form-item">
+              <label class="layui-form-label">AppKey</label>
+              <div class="layui-input-block">
+                  <input type="text" name="tencent[appkey]"  lay-reqtext="必填项，岂能为空？" placeholder="请输入" autocomplete="off" class="layui-input">
+              </div>
+          </div>
+          <div class="layui-form-item">
+            <label class="layui-form-label">短信签名</label>
+            <div class="layui-input-block">
+                <input type="text" name="tencent[sign]"  lay-reqtext="必填项，岂能为空？" placeholder="请输入" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+          <label class="layui-form-label">验证类模板</label>
+          <div class="layui-input-block">
+              <input type="text" name="tencent[code_tpl]"  lay-reqtext="必填项，岂能为空？" placeholder="请输入" autocomplete="off" class="layui-input">
+          </div>
+        </div>
+        <div class="layui-form-item">
+          <label class="layui-form-label">通知类模板</label>
+          <div class="layui-input-block">
+              <input type="text" name="tencent[notice_tpl]"  lay-reqtext="必填项，岂能为空？" placeholder="请输入" autocomplete="off" class="layui-input">
+          </div>
+        </div>
+        <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+          <legend>网易云</legend>
+        </fieldset>
+        <div class="layui-form-item">
+            <label class="layui-form-label">AppId</label>
+            <div class="layui-input-block">
+                <input type="text" name="wangyi[appid]"  lay-reqtext="必填项，岂能为空？" placeholder="请输入" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+          <div class="layui-form-item">
+              <label class="layui-form-label">AppKey</label>
+              <div class="layui-input-block">
+                  <input type="text" name="wangyi[appkey]"  lay-reqtext="必填项，岂能为空？" placeholder="请输入" autocomplete="off" class="layui-input">
+              </div>
+          </div>
+          <div class="layui-form-item">
+            <label class="layui-form-label">短信签名</label>
+            <div class="layui-input-block">
+                <input type="text" name="wangyi[sign]"  lay-reqtext="必填项，岂能为空？" placeholder="请输入" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+          <label class="layui-form-label">验证类模板</label>
+          <div class="layui-input-block">
+              <input type="text" name="wangyi[code_tpl]"  lay-reqtext="必填项，岂能为空？" placeholder="请输入" autocomplete="off" class="layui-input">
+          </div>
+        </div>
+        <div class="layui-form-item">
+          <label class="layui-form-label">通知类模板</label>
+          <div class="layui-input-block">
+              <input type="text" name="wangyi[notice_tpl]"  lay-reqtext="必填项，岂能为空？" placeholder="请输入" autocomplete="off" class="layui-input">
+          </div>
+        </div>
+        
+        <div class="layui-form-item">
+          <div class="layui-input-block">
+              <button class="layui-btn" lay-submit="" lay-filter="FormSbtn">立即提交</button>
+              <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+          </div>
+        </div>
+      </form>
+    </div>
+    <!-- 支付设置 -->
+    <div class="layui-tab-item">
+      <form class="layui-form" action="" lay-filter="FormPayment">
+          <!-- 配置项标识ID -->
+          <input type="hidden" name="key" value="payment">
+          <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+            <legend>支付宝</legend>
+          </fieldset>
+          <div class="layui-form-item">
+            <label class="layui-form-label">支付宝appId</label>
+            <div class="layui-input-block">
+                <input type="text" name="alipay[appid]"  lay-reqtext="必填项，岂能为空？" placeholder="请输入" autocomplete="off" class="layui-input">
+            </div>
+          </div>
+          <div class="layui-form-item">
+            <label class="layui-form-label">支付宝公钥</label>
+            <div class="layui-input-block">
+                <textarea placeholder="请输入内容" name="alipay[public_key]" class="layui-textarea"></textarea>
+            </div>
+          </div>
+          <div class="layui-form-item">
+            <label class="layui-form-label">签名私钥</label>
+            <div class="layui-input-block">
+              <textarea placeholder="请输入内容" name="alipay[private_key]" class="layui-textarea"></textarea>
+            </div>
+          </div>
+          <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+            <legend>微信</legend>
+          </fieldset>
+          <div class="layui-form-item">
+            <label class="layui-form-label">商户号</label>
+            <div class="layui-input-block">
+                <input type="text" name="wechat[merchant_id]"  lay-reqtext="必填项，岂能为空？" placeholder="请输入" autocomplete="off" class="layui-input">
+            </div>
+          </div>
+          <div class="layui-form-item">
+            <label class="layui-form-label">AppId</label>
+            <div class="layui-input-block">
+                <input type="text" name="wechat[appid]"  lay-reqtext="必填项，岂能为空？" placeholder="请输入" autocomplete="off" class="layui-input">
+            </div>
+          </div>
+          <div class="layui-form-item">
+            <label class="layui-form-label">签名Key</label>
+            <div class="layui-input-block">
+                <input type="text" name="wechat[key]"  lay-reqtext="必填项，岂能为空？" placeholder="请输入" autocomplete="off" class="layui-input">
+            </div>
+          </div>
+          <div class="layui-form-item">
+            <div class="layui-input-block">
+              <button class="layui-btn" lay-submit="" lay-filter="FormSbtn">立即提交</button>
+              <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+            </div>
+          </div>
+
+      </form>
+    </div>
+    <!-- 公众号设置 -->
+    <div class="layui-tab-item">
+      <form class="layui-form" action="" lay-filter="FormVipcn">
+        <!-- 配置项标识ID -->
+        <input type="hidden" name="key" value="vipcn">
+        <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+          <legend>微信公众号</legend>
+        </fieldset>
+        <div class="layui-form-item">
+          <label class="layui-form-label">AppID</label>
+          <div class="layui-input-block">
+              <input type="text" name="wechat[appid]"  lay-reqtext="必填项，岂能为空？" placeholder="请输入" autocomplete="off" class="layui-input">
+          </div>
+        </div>
+        <div class="layui-form-item">
+          <label class="layui-form-label">AppSecret</label>
+          <div class="layui-input-block">
+              <input type="text" name="wechat[secret]"  lay-reqtext="必填项，岂能为空？" placeholder="请输入" autocomplete="off" class="layui-input">
+          </div>
+        </div>
+        <div class="layui-form-item">
+          <label class="layui-form-label">MsgEncryptKey</label>
+          <div class="layui-input-block">
+              <input type="text" name="wechat[encrypt_key]"  lay-reqtext="必填项，岂能为空？" placeholder="请输入" autocomplete="off" class="layui-input">
+          </div>
+        </div>
+        <div class="layui-form-item">
+          <div class="layui-input-block">
+            <button class="layui-btn" lay-submit="" lay-filter="FormSbtn">立即提交</button>
+            <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+          </div>
+        </div>
+       </form>
+    </div>
+    <!-- 小程序设置 -->
+    <div class="layui-tab-item">
+      <form class="layui-form" action="" lay-filter="FormApplet">
+          <!-- 配置项标识ID -->
+          <input type="hidden" name="key" value="applet">
+          <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+            <legend>微信小程序</legend>
+          </fieldset>
+          <div class="layui-form-item">
+            <label class="layui-form-label">AppID</label>
+            <div class="layui-input-block">
+                <input type="text" name="wechat[appid]"  lay-reqtext="必填项，岂能为空？" placeholder="请输入" autocomplete="off" class="layui-input">
+            </div>
+          </div>
+          <div class="layui-form-item">
+            <label class="layui-form-label">AppSecret</label>
+            <div class="layui-input-block">
+                <input type="text" name="wechat[secret]"  lay-reqtext="必填项，岂能为空？" placeholder="请输入" autocomplete="off" class="layui-input">
+            </div>
+          </div>
+          <div class="layui-form-item">
+            <div class="layui-input-block">
+              <button class="layui-btn" lay-submit="" lay-filter="FormSbtn">立即提交</button>
+              <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+            </div>
+          </div>
+      </form>
+    </div>
+    <!-- App设置 -->
+    <div class="layui-tab-item">
+      <form class="layui-form" action="" lay-filter="FormApp">
+        <!-- 配置项标识ID -->
+          <input type="hidden" name="key" value="app">
+          <blockquote class="layui-elem-quote layui-text">
+             只针对Uniapp开发的应用
+          </blockquote>
+          <div class="layui-form-item">
+            <label class="layui-form-label">版本号</label>
+            <div class="layui-input-block">
+                <input type="text" name="version"  lay-reqtext="必填项，岂能为空？" placeholder="请输入" autocomplete="off" class="layui-input">
+            </div>
+          </div>
+          <div class="layui-form-item">
+            <label class="layui-form-label">安卓下载地址</label>
+            <div class="layui-input-block">
+                <input type="text" name="android_downurl"  lay-reqtext="必填项，岂能为空？" placeholder="请输入" autocomplete="off" class="layui-input">
+            </div>
+          </div>
+          <div class="layui-form-item">
+            <label class="layui-form-label">IOS下载地址</label>
+            <div class="layui-input-block">
+                <input type="text" name="ios_downurl"  lay-reqtext="必填项，岂能为空？" placeholder="请输入" autocomplete="off" class="layui-input">
+            </div>
+          </div>
+          <div class="layui-form-item">
+            <label class="layui-form-label">升级说明</label>
+            <div class="layui-input-block">
+              <textarea placeholder="请输入内容" name="upgrade_des" class="layui-textarea"></textarea>
+            </div>
+          </div>
+          <div class="layui-form-item">
+            <label class="layui-form-label">升级包</label>
+            <div class="layui-input-block">
+                <input type="text" name="ios_downurl"  lay-reqtext="必填项，岂能为空？" placeholder="请输入" autocomplete="off" class="layui-input">
+            </div>
+          </div>
+          <div class="layui-form-item">
+            <div class="layui-input-block">
+              <button class="layui-btn" lay-submit="" lay-filter="FormSbtn">立即提交</button>
+              <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+            </div>
+          </div>
+      </form>
+    </div>
+    <!-- 协议设置 -->
+    <div class="layui-tab-item">
+      <form class="layui-form" action="" lay-filter="FormProtocol">
+          <!-- 配置项标识ID -->
+          <input type="hidden" name="key" value="protocol">
+          <div class="layui-form-item">
+            <label class="layui-form-label">用户协议</label>
+            <div class="layui-input-block">
+                 @component('template.admin.form.editor', ['name' => 'agreement', 'value' => $setting['protocol']['agreement']?? ""]) @endcomponent
+            </div>
+          </div>
+          <div class="layui-form-item">
+            <label class="layui-form-label">隐私政策</label>
+            <div class="layui-input-block">
+                 @component('template.admin.form.editor', ['name' => 'privacy', 'value' => $setting['protocol']['privacy']?? ""]) @endcomponent
+            </div>
+          </div>
+          <div class="layui-form-item">
+            <div class="layui-input-block">
+              <button class="layui-btn" lay-submit="" lay-filter="FormSbtn">立即提交</button>
+              <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+            </div>
+          </div>
+      </form>
+    </div>
+    <!-- 联系方式设置 -->
+    <div class="layui-tab-item">
+      <form class="layui-form" action="" lay-filter="FormContact">
+          <!-- 配置项标识ID -->
+          <input type="hidden" name="key" value="contact">
+          <div class="layui-form-item">
+            <label class="layui-form-label">手机号码</label>
+            <div class="layui-input-block">
+                <input type="text" name="mobile"  lay-reqtext="必填项，岂能为空？" placeholder="请输入" autocomplete="off" class="layui-input">
+            </div>
+          </div>
+          <div class="layui-form-item">
+            <label class="layui-form-label">QQ</label>
+            <div class="layui-input-block">
+                <input type="text" name="qq"  lay-reqtext="必填项，岂能为空？" placeholder="请输入" autocomplete="off" class="layui-input">
+            </div>
+          </div>
+          <div class="layui-form-item">
+            <label class="layui-form-label">微信</label>
+            <div class="layui-input-block">
+                <input type="text" name="wechat"  lay-reqtext="必填项，岂能为空？" placeholder="请输入" autocomplete="off" class="layui-input">
+            </div>
+          </div>
+          <div class="layui-form-item">
+            <label class="layui-form-label">LINE</label>
+            <div class="layui-input-block">
+                <input type="text" name="line"  lay-reqtext="必填项，岂能为空？" placeholder="请输入" autocomplete="off" class="layui-input">
+            </div>
+          </div>
+          <div class="layui-form-item">
+            <label class="layui-form-label">Facebook</label>
+            <div class="layui-input-block">
+                <input type="text" name="facebook"  lay-reqtext="必填项，岂能为空？" placeholder="请输入" autocomplete="off" class="layui-input">
+            </div>
+          </div>
+          <div class="layui-form-item">
+            <label class="layui-form-label">联系负责人</label>
+            <div class="layui-input-block">
+                <input type="text" name="linkman"  lay-reqtext="必填项，岂能为空？" placeholder="请输入" autocomplete="off" class="layui-input">
+            </div>
+          </div>
+          <div class="layui-form-item">
+            <label class="layui-form-label">联系地址</label>
+            <div class="layui-input-block">
+                <input type="text" name="address"  lay-reqtext="必填项，岂能为空？" placeholder="请输入" autocomplete="off" class="layui-input">
+            </div>
+          </div>
+          <div class="layui-form-item">
+            <div class="layui-input-block">
+              <button class="layui-btn" lay-submit="" lay-filter="FormSbtn">立即提交</button>
+              <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+            </div>
+          </div>
+      </form>
+    </div>
+    <!-- 文件存储 -->
+    <div class="layui-tab-item">
+      <form class="layui-form" action="" lay-filter="FormStorage">
+          <!-- 配置项标识ID -->
+          <input type="hidden" name="key" value="storage">
+          <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+            <legend>七牛云</legend>
+          </fieldset>
+          <div class="layui-form-item">
+            <label class="layui-form-label">AccessKey</label>
+            <div class="layui-input-block">
+                <input type="text" name="qiniu[access_key]"  lay-reqtext="必填项，岂能为空？" placeholder="请输入" autocomplete="off" class="layui-input">
+            </div>
+          </div>
+          <div class="layui-form-item">
+            <label class="layui-form-label">SecretKey</label>
+            <div class="layui-input-block">
+                <input type="text" name="qiniu[secret_key]"  lay-reqtext="必填项，岂能为空？" placeholder="请输入" autocomplete="off" class="layui-input">
+            </div>
+          </div>
+          <div class="layui-form-item">
+            <label class="layui-form-label">存储空间bucket</label>
+            <div class="layui-input-block">
+                <input type="text" name="qiniu[bucket]"  lay-reqtext="必填项，岂能为空？" placeholder="请输入" autocomplete="off" class="layui-input">
+            </div>
+          </div>
+          <div class="layui-form-item">
+            <label class="layui-form-label">访问域名</label>
+            <div class="layui-input-block">
+                <input type="text" name="qiniu[domain_url]"  lay-reqtext="必填项，岂能为空？" placeholder="请输入" autocomplete="off" class="layui-input">
+            </div>
+          </div>
+          <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+            <legend>阿里云</legend>
+          </fieldset>
+          <div class="layui-form-item">
+            <label class="layui-form-label">AccessKey</label>
+            <div class="layui-input-block">
+                <input type="text" name="aliyun[access_key]"  lay-reqtext="必填项，岂能为空？" placeholder="请输入" autocomplete="off" class="layui-input">
+            </div>
+          </div>
+          <div class="layui-form-item">
+            <label class="layui-form-label">SecretKey</label>
+            <div class="layui-input-block">
+                <input type="text" name="aliyun[secret_key]"  lay-reqtext="必填项，岂能为空？" placeholder="请输入" autocomplete="off" class="layui-input">
+            </div>
+          </div>
+          <div class="layui-form-item">
+            <label class="layui-form-label">存储空间bucket</label>
+            <div class="layui-input-block">
+                <input type="text" name="aliyun[bucket]"  lay-reqtext="必填项，岂能为空？" placeholder="请输入" autocomplete="off" class="layui-input">
+            </div>
+          </div>
+          <div class="layui-form-item">
+            <label class="layui-form-label">访问域名</label>
+            <div class="layui-input-block">
+                <input type="text" name="aliyun[domain_url]"  lay-reqtext="必填项，岂能为空？" placeholder="请输入" autocomplete="off" class="layui-input">
+            </div>
+          </div>
+          <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+            <legend>腾讯云</legend>
+          </fieldset>
+          <div class="layui-form-item">
+            <label class="layui-form-label">AppId</label>
+            <div class="layui-input-block">
+                <input type="text" name="tencent[appid]"  lay-reqtext="必填项，岂能为空？" placeholder="请输入" autocomplete="off" class="layui-input">
+            </div>
+          </div>
+          <div class="layui-form-item">
+            <label class="layui-form-label">secretId</label>
+            <div class="layui-input-block">
+                <input type="text" name="tencent[secret_id]"  lay-reqtext="必填项，岂能为空？" placeholder="请输入" autocomplete="off" class="layui-input">
+            </div>
+          </div>
+          <div class="layui-form-item">
+            <label class="layui-form-label">secretKey</label>
+            <div class="layui-input-block">
+                <input type="text" name="tencent[secret_key]"  lay-reqtext="必填项，岂能为空？" placeholder="请输入" autocomplete="off" class="layui-input">
+            </div>
+          </div>
+          <div class="layui-form-item">
+            <label class="layui-form-label">访问域名</label>
+            <div class="layui-input-block">
+                <input type="text" name="tencent[domain_url]"  lay-reqtext="必填项，岂能为空？" placeholder="请输入" autocomplete="off" class="layui-input">
+            </div>
+          </div>
+          <div class="layui-form-item">
+            <div class="layui-input-block">
+              <button class="layui-btn" lay-submit="" lay-filter="FormSbtn">立即提交</button>
+              <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+            </div>
+          </div>
+      </form>
+    </div>
+
+
   </div>
-</script>
+ 
+</div> 
 
-<script type="text/html" id="barDemo">
-  <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
-  <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
-</script>
 @endsection
 
-
+ 
 @section('footer_js')
 
 <script>
-layui.use(['table', 'upload'], function(){
-  var table = layui.table, upload = layui.upload;
-   
-  table.render({
-    elem: '#test'
-    // ,url:'https://www.layui.com/test/table/demo1.json'
-    ,toolbar: '#toolbarDemo'
-    ,title: '用户数据表'
-    ,cols: [[
-      {type: 'checkbox', fixed: 'left'}
-      ,{field:'id', title:'ID', width:80, fixed: 'left', unresize: true, sort: true}
-      ,{field:'username', title:'用户名', width:120, edit: 'text'}
-      ,{field:'email', title:'邮箱', width:150, edit: 'text', templet: function(res){
-        return '<em>'+ res.email +'</em>'
-      }}
-      ,{field:'sex', title:'性别', width:80, edit: 'text', sort: true}
-      ,{field:'city', title:'城市', width:100}
-      ,{field:'sign', title:'签名'}
-      ,{field:'experience', title:'积分', width:80, sort: true}
-      ,{field:'ip', title:'IP', width:120}
-      ,{field:'logins', title:'登入次数', width:100, sort: true}
-      ,{field:'joinTime', title:'加入时间', width:120}
-      ,{fixed: 'right', title:'操作', toolbar: '#barDemo', width:150}
-    ]]
-  ,code: 0
-  ,msg: ""
-  ,count: 3000000
-  ,data: [{
-    "id": "10001"
-    ,"username": "杜甫"
-    ,"email": "xianxin@layui.com"
-    ,"sex": "男"
-    ,"city": "浙江杭州"
-    ,"sign": "点击此处，显示更多。当内容超出时，点击单元格会自动显示更多内容。"
-    ,"experience": "116"
-    ,"ip": "192.168.0.8"
-    ,"logins": "108"
-    ,"joinTime": "2016-10-14"
-  }, {
-    "id": "10002"
-    ,"username": "李白"
-    ,"email": "xianxin@layui.com"
-    ,"sex": "男"
-    ,"city": "浙江杭州"
-    ,"sign": "君不见，黄河之水天上来，奔流到海不复回。 君不见，高堂明镜悲白发，朝如青丝暮成雪。 人生得意须尽欢，莫使金樽空对月。 天生我材必有用，千金散尽还复来。 烹羊宰牛且为乐，会须一饮三百杯。 岑夫子，丹丘生，将进酒，杯莫停。 与君歌一曲，请君为我倾耳听。(倾耳听 一作：侧耳听) 钟鼓馔玉不足贵，但愿长醉不复醒。(不足贵 一作：何足贵；不复醒 一作：不愿醒/不用醒) 古来圣贤皆寂寞，惟有饮者留其名。(古来 一作：自古；惟 通：唯) 陈王昔时宴平乐，斗酒十千恣欢谑。 主人何为言少钱，径须沽取对君酌。 五花马，千金裘，呼儿将出换美酒，与尔同销万古愁。"
-    ,"experience": "12"
-    ,"ip": "192.168.0.8"
-    ,"logins": "106"
-    ,"joinTime": "2016-10-14"
-    ,"LAY_CHECKED": true
-  }, {
-    "id": "10003"
-    ,"username": "王勃"
-    ,"email": "xianxin@layui.com"
-    ,"sex": "男"
-    ,"city": "浙江杭州"
-    ,"sign": "人生恰似一场修行"
-    ,"experience": "65"
-    ,"ip": "192.168.0.8"
-    ,"logins": "106"
-    ,"joinTime": "2016-10-14"
-  }, {
-    "id": "10004"
-    ,"username": "李清照"
-    ,"email": "xianxin@layui.com"
-    ,"sex": "女"
-    ,"city": "浙江杭州"
-    ,"sign": "人生恰似一场修行"
-    ,"experience": "666"
-    ,"ip": "192.168.0.8"
-    ,"logins": "106"
-    ,"joinTime": "2016-10-14"
-  }, {
-    "id": "10005"
-    ,"username": "冰心"
-    ,"email": "xianxin@layui.com"
-    ,"sex": "女"
-    ,"city": "浙江杭州"
-    ,"sign": "人生恰似一场修行"
-    ,"experience": "86"
-    ,"ip": "192.168.0.8"
-    ,"logins": "106"
-    ,"joinTime": "2016-10-14"
-  }, {
-    "id": "10006"
-    ,"username": "贤心"
-    ,"email": "xianxin@layui.com"
-    ,"sex": "男"
-    ,"city": "浙江杭州"
-    ,"sign": "人生恰似一场修行"
-    ,"experience": "12"
-    ,"ip": "192.168.0.8"
-    ,"logins": "106"
-    ,"joinTime": "2016-10-14"
-  }, {
-    "id": "10007"
-    ,"username": "贤心"
-    ,"email": "xianxin@layui.com"
-    ,"sex": "男"
-    ,"city": "浙江杭州"
-    ,"sign": "人生恰似一场修行"
-    ,"experience": "16"
-    ,"ip": "192.168.0.8"
-    ,"logins": "106"
-    ,"joinTime": "2016-10-14"
-  }, {
-    "id": "10008"
-    ,"username": "贤心"
-    ,"email": "xianxin@layui.com"
-    ,"sex": "男"
-    ,"city": "浙江杭州"
-    ,"sign": "人生恰似一场修行"
-    ,"experience": "106"
-    ,"ip": "192.168.0.8"
-    ,"logins": "106"
-    ,"joinTime": "2016-10-14"
-  }]
-    ,page: true
-  });
-
-  //头工具栏事件
-  table.on('toolbar(test)', function(obj){
-    var checkStatus = table.checkStatus(obj.config.id);
-    switch(obj.event){
-      case 'getCheckData':
-        var data = checkStatus.data;
-        layer.alert(JSON.stringify(data));
-      break;
-      case 'getCheckLength':
-        var data = checkStatus.data;
-        layer.msg('选中了：'+ data.length + ' 个');
-      break;
-      case 'isAll':
-        layer.msg(checkStatus.isAll ? '全选': '未全选');
-      break;
-    };
-  });
-
-  //监听行工具事件
-  table.on('tool(test)', function(obj){
-    var data = obj.data;
-    //console.log(obj)
-    if(obj.event === 'del'){
-      layer.confirm('真的删除行么', function(index){
-        obj.del();
-        layer.close(index);
+layui.use(['form', 'upload', 'element', 'layer'], function(){
+  var form = layui.form, upload = layui.upload, layer = layui.layer, element = layui.element, $ = layui.jquery;
+   //监听提交
+   form.on('submit(FormSbtn)', function (data) {
+        
+        switch (data.field.key) {
+          case 'web':
+            data.field.close = data.field.close ? 1 : 0;
+            break;
+          case 'sms':
+          
+            break;
+          case 'payment':
+          
+            break;
+          case 'vipcn':
+          
+            break;
+          case 'applet':
+          
+            break;
+          case 'app':
+          
+            break;
+          
+          case 'protocol':
+            break;
+          case 'contact':
+            break;
+          case 'storage':
+            break;
+          default:
+            break;
+        }
+        console.log(data.field)
+        
+        http_post("/backdata/setting/edit", data.field, function(result){
+          layer.msg(result.msg)
+        })
+        return false;
+    });
+    //自定义验证规则
+    form.verify({
+         /*  title: function (value) {
+              if (value.length < 5) {
+                  return '标题至少得5个字符啊';
+              }
+          }
+          , pass: [
+              /^[\S]{6,12}$/
+              , '密码必须6到12位，且不能出现空格'
+          ]
+          , content: function (value) {
+              layedit.sync(editIndex);
+          } */
       });
-    } else if(obj.event === 'edit'){
-      layer.prompt({
-        formType: 2
-        ,value: data.email
-      }, function(value, index){
-        obj.update({
-          email: value
-        });
-        layer.close(index);
-      });
-    }
-  });
+     //表单初始赋值
+     form.val('FormWeb', {
+            "name": "{!! $setting['web']['name']?? '' !!}" // 
+            , "base_url": "{!! $setting['web']['base_url']?? '' !!}"
+            , "interest": 2
+            @isset($setting['web']['worktime[day]']),"worktime[day]": true @endisset //复选框选中状态
+            @isset($setting['web']['worktime[night]']),"worktime[night]": true @endisset
+            @isset($setting['web']['worktime[all]']),"worktime[all]": true @endisset
+            , "close": @if(isset($setting['web']['close']) and $setting['web']['close'] == 1 ) true @else false    @endif //开关状态
+            , "storage": "{{$setting['web']['storage']?? 0 }}"
+            , "business": "{{$setting['web']['business']?? 0 }}"
+            , "description": "{!! $setting['web']['description']?? '' !!}"
+        })
+    form.val('FormSms', {
+        
+    })
+    form.val('FormPayment', {
+        
+    })
+    form.val('FormVipcn', {
+        
+    })
+    form.val('FormApplet', {
+       
+    })
+    form.val('FormApp', {
+         
+    })
+    form.val('FormProtocol', {
+       
+       
+    })
+
 });
 </script>
 @endsection

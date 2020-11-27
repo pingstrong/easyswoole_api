@@ -105,13 +105,13 @@ Http.interceptors.response.use(function (response) {
 
 function http_post(url, datajson, callback)
 {
-    if(typeof datajson === 'object'){
+    /* if(typeof datajson === 'object'){
           let tmpdata = ""
            for (const key in datajson) {
             tmpdata += key + "=" + datajson[key] + "&"
            }
            datajson = tmpdata.substring(0, tmpdata.length - 1)
-    }
+    } */
     Http.post(url, datajson).then(result => {
         callback(result.data)
     }).catch(function(error){

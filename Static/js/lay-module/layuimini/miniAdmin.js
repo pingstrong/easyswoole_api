@@ -76,7 +76,8 @@ layui.define(["jquery", "miniMenu", "element","miniTab", "miniTheme"], function 
                     miniAdmin.deleteLoader(options.loadingTime);
                 }
             }).fail(function () {
-                miniAdmin.error('菜单接口有误');
+                miniAdmin.error('确保是否登录！');
+                window.location.reload();
             });
         },
 

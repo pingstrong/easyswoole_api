@@ -20,4 +20,5 @@ return [
     'request_upload_too_big'        => '文件上傳過大',
     'request_upload_ext_fail'       => '文件格式錯誤',
     'request_submit_repeat'         => '重複提交表單',
+    'request_upload_error'        => 'request_upload_error',
 ];

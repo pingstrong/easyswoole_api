@@ -93,7 +93,10 @@ class AdminRoleService extends BaseService
      * @return void
      */
     public function saveIdRules(int $id, $rules_checked, $rules)
-    {
+    {   
+        if(is_array($rules_checked)) $rules_checked = implode(",", $rules_checked);
+        if(is_array($rules)) $rules = implode(",", $rules);
+        
         if ($this->setById($id, ['rules_checked' => $rules_checked, 'rules' =>  $rules])) {
             // $this->cacheRules($id);
             return true;

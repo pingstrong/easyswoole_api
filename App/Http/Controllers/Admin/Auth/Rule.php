@@ -41,8 +41,7 @@ class Rule extends AdminController
     private function fieldInfo()
     {
         $request = $this->request();
-        $data    = $request->getRequestParam('name', 'node', 'status', 'route_uri', 'route_handler', 'is_menu', 'icon');
-
+        $data    = $this->getRequestParams(['name', 'node', 'status', 'route_uri', 'route_handler', 'is_menu', 'icon']);//$request->getRequestParam('name', 'node', 'status', 'route_uri', 'route_handler', 'is_menu', 'icon');
         $validate = new \EasySwoole\Validate\Validate();
         $validate->addColumn('name')->required();
         $validate->addColumn('node')->required();
@@ -85,7 +84,7 @@ class Rule extends AdminController
 
         if(!$this->hasRule($this->rule_rule_addnode)) return ;
 
-        $id = $this->request()->getRequestParam('id');
+        $id = $this->request_params['id'];
         $info = AdminRuleService::getInstance()->getById($id);
         if (!$info) {
             $this->show404();
@@ -102,8 +101,7 @@ class Rule extends AdminController
         if (!$data) {
             return;
         }
-
-        $data['pid'] = $this->request()->getRequestParam('id');
+        $data['pid'] = $this->request_params['id'];
 
         if (AdminRuleService::getInstance()->add($data)) {
             $this->writeJson(Status::CODE_OK);
@@ -118,7 +116,7 @@ class Rule extends AdminController
     {
         if(!$this->hasRule($this->rule_rule_set)) return ;
 
-        $id = $this->request()->getRequestParam('id');
+        $id = $this->request_params['id'];
 
         if (!$id) {
             $this->show404();
@@ -145,7 +143,7 @@ class Rule extends AdminController
             return;
         }
 
-        $id = $this->request()->getRequestParam('id');
+        $id = $this->request_params['id'];
 
         if (AdminRuleService::getInstance()->setById($id, $data)) {
             $this->writeJson(Status::CODE_OK);
@@ -161,7 +159,7 @@ class Rule extends AdminController
         if(!$this->hasRule($this->rule_rule_set)) return ;
 
         $request  = $this->request();
-        $data     = $request->getRequestParam('id', 'key', 'value');
+        $data     = $this->getRequestParams(['id', 'key', 'value']);//$request->getRequestParam('id', 'key', 'value');
         $validate = new \EasySwoole\Validate\Validate();
 
         $validate->addColumn('key')->required()->func(function ($params, $key) {
@@ -192,7 +190,7 @@ class Rule extends AdminController
         if(!$this->hasRule($this->rule_rule_del)) return ;
 
         $request = $this->request();
-        $id      = $request->getRequestParam('id');
+        $id      = $this->request_params['id'];
         $bool    = AdminRuleService::getInstance()->delete($id);
         if ($bool) {
             $this->writeJson(Status::CODE_OK, '');

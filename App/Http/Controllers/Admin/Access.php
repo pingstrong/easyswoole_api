@@ -20,6 +20,20 @@ use EasySwoole\Jwt\Jwt;
 class Access extends BaseController
 {
     
+    protected $middleware = [];
+    /**
+     * Undocumented function
+     *
+     * @author pingo
+     * @created_at 00-00-00
+     * @return void
+     */
+    public function initialize()
+    {
+        $request_raw = json_decode($this->request_raw, true) ?? [];
+		$this->request_post = array_merge($this->request_post, $request_raw);
+        $this->request_params = array_merge($this->request_params, $request_raw);
+    }
     /**
      * 登录首页展示
      *
@@ -41,7 +55,7 @@ class Access extends BaseController
     {
          
         $request = $this->request();
-        $data    = $request->getRequestParam('uname', 'pwd', 'captcha');
+        $data    = $this->request_params;
        
         $encry = Config::getInstance()->getConf('app.verify_encry');
 

@@ -6,7 +6,7 @@ use App\Utility\Message\ApiFormat;
 use EasySwoole\Http\AbstractInterface\Controller;
 use EasySwoole\Template\Render;
 use App\Utility\Message\Status;
-
+use EasySwoole\EasySwoole\ServerManager;
 /**
  * 基类
  *
@@ -37,8 +37,9 @@ abstract class BaseController extends Controller
     protected $request_get = [];
     //请求post 参数
     protected $request_post = [];
-
-
+    //swoole_server
+    protected $swoole_server;
+    protected $swoole_http_response;
     /**
      * 初始化控制器
      *
@@ -181,10 +182,13 @@ abstract class BaseController extends Controller
         $this->request_raw          = $this->request()->getBody()->__toString();
         $this->request_get          = $this->request()->getQueryParams();
         $this->request_post         = $this->request()->getParsedBody();
-        
+        $this->swoole_server = ServerManager::getInstance()->getSwooleServer();
+        $this->swoole_http_response = $this->response()->getSwooleResponse();
         //调用中间件、
-        if(empty($this->middleware)) return true;
-        if(in_array($action, $this->except) || (!empty($this->only) && !in_array($action, $this->only))) return true;
+        if(empty($this->middleware) || in_array($action, $this->except) || (!empty($this->only) && !in_array($action, $this->only))){
+            $this->initialize();
+            return true;
+        };
 
         $request = $this->request();
         $response = $this->response();

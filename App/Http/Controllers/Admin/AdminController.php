@@ -34,7 +34,49 @@ class AdminController extends BaseController
 	 {
 		$this->account_rule_nodes = $this->request()->account_rule_nodes;
 		$this->jwt_data = $this->auth = $this->request()->jwt_data;
-		  
+		if(isset($this->request_header['content-type'])){
+			//application/x-www-form-urlencoded	 
+			//multipart/form-data 
+			//text/xml
+			//application/json application/octet-stream
+			//兼容payload方式请求
+			
+			$payload_type = 'application/json';
+			foreach($this->request_header['content-type'] as $type){
+				if(FALSE !== strpos($type, $payload_type)){
+					$request_raw = json_decode($this->request_raw, true) ?? [];
+					$this->request_post = array_merge($this->request_post, $request_raw);
+					$this->request_params = array_merge($this->request_params, $request_raw);  
+				}
+			}
+			
+		}
+	 }
+	 /**
+	  * 获取请求参数
+	  *
+	  * @author pingo
+	  * @created_at 00-00-00
+	  * @param [type] $keys
+	  * @return void
+	  */
+	 protected function getRequestParams($keys = null)
+	 {
+			if(is_null($keys)) return $this->request_params;
+			if(is_string($keys)){
+				if(isset($this->request_params[$keys])){
+					return $this->request_params[$keys];
+				}
+				return null;
+			}
+			//array
+			$data = [];
+			foreach($keys as $param){
+				if(array_key_exists($param, $this->request_params)){
+					$data[$param] = $this->request_params[$param];
+				}
+			}
+			return $data;
 	 }
 	/**
 	 * 渲染数据
@@ -74,7 +116,7 @@ class AdminController extends BaseController
 	public function hasRule($rule)
 	{
 		if(!in_array($rule, $this->account_rule_nodes) ){
-			$this->responseGP('/backdata/main', Status::CODE_RULE_ERR, '权限不足');
+			$this->responseGP('/backdata/403', Status::CODE_RULE_ERR, '权限不足');
 			return false;
 		}
 		return true;

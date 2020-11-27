@@ -39,6 +39,8 @@ $FastRoute->addGroup('/backdata', function (RouteCollector $route) {
     $route->get('/dashboard', '/Admin/Index/dashboard');
     $route->get('/clearCache', '/Admin/Index/clearCache');
     $route->get('/initMenu', '/Admin/Index/initMenu');
+    $route->get('/{id:\d+}', '/Admin/Index/defaultPage');
+    
 });
 
 //获取后台路由配置

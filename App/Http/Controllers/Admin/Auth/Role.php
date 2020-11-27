@@ -45,7 +45,7 @@ class Role extends AdminController
     private function fieldInfo()
     {
         $request = $this->request();
-        $data    = $request->getRequestParam('name', 'detail','pid');
+        $data    = $this->getRequestParams(['name', 'detail','pid']);//$request->getRequestParam('name', 'detail','pid');
 
         $validate = new \EasySwoole\Validate\Validate();
         $validate->addColumn('name')->required();
@@ -88,8 +88,8 @@ class Role extends AdminController
     {
         if(!$this->hasRule($this->rule_role_set)) return ;
 
-        $id = $this->request()->getRequestParam('id');
-
+        $id = $this->getRequestParams('id');
+        var_dump($id);
         $info = AdminRoleService::getInstance()->getById($id);
         $role_data = AdminRoleService::getInstance()->getAllList(['id', 'name'], ['id' =>[$id, '<>']]);
 
@@ -105,7 +105,7 @@ class Role extends AdminController
             return;
         }
        
-        $id = $this->request()->getRequestParam('id');
+        $id = $this->request_params['id'];
         if (AdminRoleService::getInstance()->setById($id, $data)) {
             $this->writeJson(Status::CODE_OK);
         } else {
@@ -120,7 +120,7 @@ class Role extends AdminController
         if(!$this->hasRule($this->rule_role_set)) return ;
 
         $request  = $this->request();
-        $data     = $request->getRequestParam('id', 'key', 'value');
+        $data     = $this->getRequestParams(['id', 'key', 'value']);//$request->getRequestParam('id', 'key', 'value');
         $validate = new \EasySwoole\Validate\Validate();
 
         $validate->addColumn('key')->required()->func(function ($params, $key) {
@@ -150,7 +150,7 @@ class Role extends AdminController
         if(!$this->hasRule($this->rule_role_del)) return ;
 
         $request = $this->request();
-        $id      = $request->getRequestParam('id');
+        $id      = $this->request_params['id'];
         $bool    = AdminRoleService::getInstance()->delete($id);
         if ($bool) {
             $this->writeJson(Status::CODE_OK, '');
@@ -167,7 +167,8 @@ class Role extends AdminController
         $rule_data = AdminRuleService::getInstance()->getAllList(['id', 'name as title', 'name', 'pid'], ['status' => 1]);
          
         $data      = AppFunc::arrayToTree($rule_data);
-        $id        = $this->request()->getRequestParam('id');
+        $id        = $this->request_params['id'];
+       
         $role_info = AdminRoleService::getInstance()->getById($id);
         
         $this->render('admin.auth.editRule', ['id' => $id, 'data' => $data, 'checked' => explode(',', $role_info['rules_checked'])]);
@@ -177,8 +178,8 @@ class Role extends AdminController
     {
         if(!$this->hasRule($this->rule_role_rule)) return ;
 
-        $info = $this->request()->getRequestParam('id', 'rules_checked', 'rules');
-         
+        $info = $this->getRequestParams(['id', 'rules_checked', 'rules']);//$this->request()->getRequestParam('id', 'rules_checked', 'rules');
+         var_dump($info);
         $id = $info['id'];
         if (AdminRoleService::getInstance()->saveIdRules($id, $info['rules_checked'] ? $info['rules_checked'] : [], $info['rules'] ? $info['rules'] : [])) {
             $this->writeJson(Status::CODE_OK);

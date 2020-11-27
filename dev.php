@@ -11,6 +11,7 @@ return [
             'worker_num'    => 8,
             'reload_async'  => true,
             'max_wait_time' => 3,
+            'open_http2_protocol' => true,
             'document_root' => './App/Static', // 版本小于v4.4.0时必须为绝对路径
             'enable_static_handler' => true,
         ],

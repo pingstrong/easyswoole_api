@@ -10,7 +10,8 @@ return [
         'SETTING'   => [
             'worker_num'    => 8,
             'reload_async'  => true,
-            'max_wait_time' => 3
+            'max_wait_time' => 3,
+            'open_http2_protocol' => true,
         ],
         'TASK'  => [
             'workerNum'     => 4,

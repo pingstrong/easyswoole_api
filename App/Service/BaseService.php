@@ -1,13 +1,65 @@
 <?php
 namespace App\Service;
 
+use App\Utility\Message\ApiFormat;
+use App\Utility\Message\Status;
 
 /**
  * 核心服务类
  */
 abstract class BaseService
 {
-   
+    //请求返回状态码
+    protected $code = Status::CODE_OK;
+    //请求返回消息
+    protected $msg  = "";
+    //请求返回数据体
+    protected $data = null;
+
+    /**
+     * 返回状态码
+     *
+     * @author pingo
+     * @created_at 00-00-00
+     * @return void
+     */
+    public function getCode()
+    {
+        return $this->code;
+    }
+    /**
+     * 返回标题信息
+     *
+     * @author pingo
+     * @created_at 00-00-00
+     * @return void
+     */
+    public function getMsg()
+    {
+        return $this->msg;
+    }
+    /**
+     * 返回数据
+     *
+     * @author pingo
+     * @created_at 00-00-00
+     * @return void
+     */
+    public function getData()
+    {
+        return $this->data;
+    }
+    /**
+     * 返回api结果
+     *
+     * @author pingo
+     * @created_at 00-00-00
+     * @return void
+     */
+    public function getResult()
+    {
+        return ApiFormat::api($this->code, $this->msg, $this->data);
+    }
     /**
      * 返回业务处理数据
      *

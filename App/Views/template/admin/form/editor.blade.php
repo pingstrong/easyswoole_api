@@ -1,13 +1,14 @@
 
-<div id="editor_{{$editor_id}}" style="margin: 50px 0 50px 0">
-    <p>欢迎使用 <b>富文本编辑器</b></p>
+<textarea name="{{$name}}" id="{{$name}}" hidden cols="30" rows="1">{!! $value !!}</textarea>
+<div id="editor_{{$name}}" style="margin: 50px 0 50px 0">
+     
 </div>
 <script type="text/javascript">
     layui.use(['layer','wangEditor'], function () {
         var $ = layui.jquery,
             layer = layui.layer,
             wangEditor = layui.wangEditor;
-        var dispatchId = "{{$editor_id}}";
+        var dispatchId = "{{$name}}";
         var editor = new wangEditor('#editor_' + dispatchId);
         editor.config.uploadImgServer = "/backdata/filestem/upload";
         editor.config.uploadFileName = 'image';
@@ -41,7 +42,6 @@
             layer.msg(info);
         };
         editor.create();
-        editor.txt.html($('#' + dispatchId).val())
-
+        editor.txt.html($('#' + dispatchId).val()) // 重新设置编辑器内容
     });
 </script>

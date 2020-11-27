@@ -20,6 +20,7 @@ return [
     'request_upload_too_big'        => 'file upload too large',
     'request_upload_ext_fail'       => 'file format error',
     'request_submit_repeat'         => 'Submit Form repeatedly',
+    'request_upload_error'        => 'request_upload_error',
 
 ];
  

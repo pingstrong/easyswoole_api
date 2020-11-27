@@ -109,10 +109,23 @@ class Index extends AdminController
         $this->dataJson($data);
         return;
     }
-
+    /**
+     * default page
+     *
+     * @author pingo
+     * @created_at 00-00-00
+     * @return void
+     */
+    public function defaultPage()
+    {
+        $page_no = [403, 404, 502];
+        $page = in_array($this->request_params['id'], $page_no) ? $this->request_params['id'] : $page_no[1];
+        return $this->render("default.{$page}");
+    }
     // 日志
     public function version()
     {
+        
         $this->render('admin.home.version');
     }
 }

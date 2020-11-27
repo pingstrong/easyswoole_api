@@ -39,7 +39,7 @@ class User extends AdminController
     private function fieldInfo()
     {
         $request = $this->request();
-        $data    = $request->getRequestParam('uname', 'pwd', 'status', 'display_name', 'role_id');
+        $data    = $this->getRequestParams(['uname', 'pwd', 'status', 'display_name', 'role_id']);//$request->getRequestParam('uname', 'pwd', 'status', 'display_name', 'role_id');
 
         $validate = new \EasySwoole\Validate\Validate();
         $validate->addColumn('uname')->required();
@@ -88,7 +88,7 @@ class User extends AdminController
     {
         if(!$this->hasRule($this->rule_auth_set)) return ;
 
-        $id        = $this->request()->getRequestParam('id');
+        $id        = $this->request_params['id'];
         $role_data = AdminRoleService::getInstance()->getAllList();
         $user_data = AdminUserService::getInstance()->getUserById($id);
         if (!$user_data) {
@@ -108,7 +108,7 @@ class User extends AdminController
         if (!$data) {
             return;
         }
-        $id = $this->request()->getRequestParam('id');
+        $id = $this->request_params['id'];
         $user_data = AdminUserService::getInstance()->getUserById($id);
         $data['pwd'] = encrypt($data['pwd'], $user_data['encry']);
         if (AdminUserService::getInstance()->setUserById($id, $data)) {
@@ -129,7 +129,7 @@ class User extends AdminController
 
     public function editPwdData()
     {
-        $info = $this->request()->getRequestParam('old_pwd','pwd');
+        $info = $this->getRequestParams(['old_pwd','pwd']);
         
         if (encrypt($info['old_pwd'], $this->auth['encry']) == $this->auth['pwd']) {
             $new_pwd = encrypt($info['pwd'], $this->auth['encry']);
@@ -159,7 +159,7 @@ class User extends AdminController
         if(!$this->hasRule($this->rule_auth_set)) return ;
 
         $request  = $this->request();
-        $data     = $request->getRequestParam('id', 'key', 'value');
+        $data     = $this->getRequestParams(['id', 'key', 'value']);
         $validate = new \EasySwoole\Validate\Validate();
 
         $validate->addColumn('key')->required()->func(function ($params, $key) {
@@ -187,7 +187,7 @@ class User extends AdminController
         if(!$this->hasRule($this->rule_auth_del)) return ;
 
         $request = $this->request();
-        $id      = $request->getRequestParam('id');
+        $id      = $this->getRequestParams('id');
         $bool    = AdminUserService::getInstance()->setUserById($id, ['deleted' => 1]);
         if ($bool) {
             $this->writeJson(Status::CODE_OK, '');

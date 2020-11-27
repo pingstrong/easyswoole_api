@@ -18,6 +18,7 @@ return [
     'request_not_safe'              => '请求有安全隐患',
     'request_login_need'            => '请登录在操作',
     'request_upload_too_big'        => '文件上传过大',
+    'request_upload_error'        => '文件上穿异常',
     'request_upload_ext_fail'       => '文件格式错误',
     'request_submit_repeat'         => '重复提交表单',
     

@@ -13,4 +13,9 @@ use App\Model\BaseModel;
 class Setting extends BaseModel
 {
     protected $tableName = "common_setting";
+    //类型
+    protected $casts = [
+        'key_value'     => 'array',
+    ];
+     
 }
